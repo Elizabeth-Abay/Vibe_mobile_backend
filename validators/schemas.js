@@ -13,7 +13,7 @@ const verifyUser = Joi.object({
 
 const userInformationFirstTime = Joi.object({
     userName: Joi.alphanum().length(5).required(),
-    password: Joi.string()
+    password: Joi.string().length(8)
 });
 
 const userNameTakenChecker = Joi.object({
@@ -21,10 +21,17 @@ const userNameTakenChecker = Joi.object({
 });
 
 
+const logInValidator = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().length(8)
+});
+
+
 module.exports = {
     registrationChecker,
     verifyUser,
     userInformationFirstTime,
-    userNameTakenChecker
+    userNameTakenChecker,
+    logInValidator
 }
 
