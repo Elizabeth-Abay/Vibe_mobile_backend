@@ -10,7 +10,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "joi": "^18.1.2"
+    "joi": "^18.1.2",
+    "pg": "^8.20.0"
   }
 }
