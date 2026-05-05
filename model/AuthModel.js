@@ -67,23 +67,23 @@ class AuthModelPg {
         try {
             let query = 'SELECT otp_hashed FROM users WHERE email=$1 AND otp_expires_at > CURRENT_TIMESTAMP';
 
-            let values=[email];
+            let values = [email];
 
             let result = await pg.query(
-                query,values
+                query, values
             )
 
 
-            if (result.rows.length === 1){
+            if (result.rows.length === 1) {
                 return {
-                    success : true,
-                    data : result.rows[0]
+                    success: true,
+                    data: result.rows[0]
                 }
             }
 
             return {
-                success : false,
-                reason : "Otp doesn't exist or is expired"
+                success: false,
+                reason: "Otp doesn't exist or is expired"
             }
 
         } catch (err) {
@@ -114,8 +114,8 @@ class AuthModelPg {
             );
 
             return {
-                success : true,
-                data : result.rows
+                success: true,
+                data: result.rows
             }
 
         } catch (err) {
@@ -131,5 +131,38 @@ class AuthModelPg {
 
 
 class AuthModelGraph {
+    async createGraphNode(userid) {
+        try {
+            // create a node
+            let res = await sessionToWrite.executeWrite(
+                tx => {
+                    return tx.run(
+                        `CREATE (n:Person { userId : $userid }) RETURN n`,
+                        {
+                            userid
+                        }
+                    )
+                }
+            )
 
+            if (res.records[0]?.length === 0) {
+                return {
+                    success: false,
+                    reason: "Data base problem"
+                }
+            }
+
+            return {
+                success: true
+            }
+        } catch (err) {
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthModelGraph.createGraphNode';
+            }
+            throw err;
+        }
+
+    }
 }

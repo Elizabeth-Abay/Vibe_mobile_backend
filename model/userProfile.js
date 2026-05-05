@@ -13,17 +13,20 @@ class UserProfile {
         }
     }
 
-    async puttingInPassword({ name , userName , email, password }) {
+    async settingProfile({ name , userName , email, password }) {
         try {
             let query=`
-                INSERT INTO users(user_name , password_hashed , name)
+                UPDATE users(user_name , password_hashed , name)
                 VALUES($1,$2,$3)
                 WHERE  email=$4
+                RETURNING id
             `
 
             let values=[userName,password ,name ];
 
-            let result = await pg.query(query , values)
+            let result = await pg.query(query , values);
+
+
 
 
         } catch (err) {
