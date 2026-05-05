@@ -1,11 +1,15 @@
+const AuthService = require('../service/authService');
+
+const authService = new AuthService();
+
 class AuthController {
     constructor() { }
 
     async createUser(req, res, next) {
         // to be able to call the global error handler in case of error
         try {
-            // gets sent email only and respond with user id
-            // and create the graph node
+            // validator already called in the routes
+            let result = await authService.createUser()
 
         } catch (err) {
             req.from = "AuthControllers.createUser";

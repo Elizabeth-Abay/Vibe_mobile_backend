@@ -47,7 +47,6 @@ class AuthModelPg {
             )
 
             return {
-                success: true,
                 data: result.rows[0]
             }
 
@@ -145,12 +144,6 @@ class AuthModelGraph {
                 }
             )
 
-            if (res.records[0]?.length === 0) {
-                return {
-                    success: false,
-                    reason: "Data base problem"
-                }
-            }
 
             return {
                 success: true

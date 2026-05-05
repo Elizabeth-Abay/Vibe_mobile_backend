@@ -1,37 +1,43 @@
 const { AuthModelPg, AuthModelGraph } = require('../model/AuthModel');
 const generateOTP = require('../utils/otpGenerator');
 const sha1Hasher = require('../utils/shaHasher');
-
+const EmailSendingFunctions = require('./emailSending');
 
 const authModelPg = new AuthModelPg();
 const authModelGraph = new AuthModelGraph();
 
 class AuthService {
-    async createUser({email}) {
+    async createUser(email) {
         try {
             // check if user exist send them email 
             let isUniqueResult = await authModelPg.checkUserExist(email);
 
-            if (isUniqueResult.data.length !== 0){
+            if (isUniqueResult.data.length !== 0) {
                 // means if there is a user with same email
                 return {
-                    success : false,
-                    reason : "User already exists"
+                    success: false,
+                    reason: "User already exists"
                 }
             }
 
             // else generate and hash otp and email it
-            let otpGenerated = generateOTP();
-            let hashedOtp = sha1Hasher(otpGenerated);
+            let OTP = generateOTP();
+            let otpHashed = sha1Hasher(OTP);
 
             // sending email
+            await EmailSendingFunctions.sendingOTPEmail({ email, OTP });
 
+            // creating the user node and the user in pg
+            let userInPg = await authModelPg.createUser({ email, otpHashed });
 
+            let { id } = userInPg;
 
+            let userInGraph = await authModelGraph.createGraphNode(id);
 
-
-
-
+            return {
+                success: true,
+                data : id
+            }
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
@@ -106,3 +112,6 @@ class AuthService {
 
     }
 }
+
+
+module.exports = AuthService;
