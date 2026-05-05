@@ -166,3 +166,9 @@ class AuthModelGraph {
 
     }
 }
+
+
+module.exports = {
+    AuthModelPg,
+    AuthModelGraph
+}

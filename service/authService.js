@@ -1,10 +1,37 @@
-const errorNotifier = require('../utils/errorNotifier');
-// from , message
+const { AuthModelPg, AuthModelGraph } = require('../model/AuthModel');
+const generateOTP = require('../utils/otpGenerator');
+const sha1Hasher = require('../utils/shaHasher');
+
+
+const authModelPg = new AuthModelPg();
+const authModelGraph = new AuthModelGraph();
 
 class AuthService {
-    async createUser(sentInfo) {
+    async createUser({email}) {
         try {
-            // check if user exist , generate and hash otp, send them email 
+            // check if user exist send them email 
+            let isUniqueResult = await authModelPg.checkUserExist(email);
+
+            if (isUniqueResult.data.length !== 0){
+                // means if there is a user with same email
+                return {
+                    success : false,
+                    reason : "User already exists"
+                }
+            }
+
+            // else generate and hash otp and email it
+            let otpGenerated = generateOTP();
+            let hashedOtp = sha1Hasher(otpGenerated);
+
+            // sending email
+
+
+
+
+
+
+
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
@@ -33,7 +60,7 @@ class AuthService {
     async enterUserInfo(sentInfo) {
         try {
 
-        }catch (err) {
+        } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 err.from = 'AuthService.enterUserInfo';
@@ -57,7 +84,7 @@ class AuthService {
     async logIn(sentInfo) {
         try {
 
-        }catch (err) {
+        } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 err.from = 'AuthService.logIn';

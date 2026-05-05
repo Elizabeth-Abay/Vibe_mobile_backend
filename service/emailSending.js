@@ -1,0 +1,1 @@
+const emailTransporter = require('../config/emailTransporter');

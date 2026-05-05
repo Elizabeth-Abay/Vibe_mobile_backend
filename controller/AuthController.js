@@ -14,7 +14,7 @@ class AuthController {
     }
 
 
-    async verifyUser(req, res, next) {
+    async verifyUserOtp(req, res, next) {
         try {
             // otp matching 
 
