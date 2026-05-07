@@ -1,11 +1,14 @@
 const { AuthModelPg, AuthModelGraph } = require('../model/AuthModel');
 const generateOTP = require('../utils/otpGenerator');
-const sha1Hasher = require('../utils/shaHasher');
+const shaHasher = require('../utils/shaHasher');
 const EmailSendingFunctions = require('./emailSending');
 const doesOtpMatch = require('../utils/OtpMatched');
+const { RefreshToken, AccessToken } = require('./tokenGeneration');
 
 const authModelPg = new AuthModelPg();
 const authModelGraph = new AuthModelGraph();
+const refreshService = new RefreshToken();
+const accessService = new AccessToken();
 
 class AuthService {
     async createUser(email) {
@@ -23,7 +26,7 @@ class AuthService {
 
             // else generate and hash otp and email it
             let OTP = generateOTP();
-            let otpHashed = sha1Hasher(OTP);
+            let otpHashed = shaHasher(OTP);
 
             // sending email
             await EmailSendingFunctions.sendingOTPEmail({ email, OTP });
@@ -36,7 +39,7 @@ class AuthService {
             let userInGraph = await authModelGraph.createGraphNode(id);
 
             return {
-                data : id
+                data: id
             }
 
         } catch (err) {
@@ -50,25 +53,27 @@ class AuthService {
 
     }
 
-    async verifyUser({id , OTP}) {
+    async verifyUser({ id, OTP }) {
         try {
             // get Otp and hash and compare it
             // hash otp
-            let OtpHashed = sha1Hasher(OTP);
+            let OtpHashed = shaHasher(OTP);
 
             // get the otp from db
             let { data } = await authModelPg.getOtp(id);
 
-            let otpMatched = doesOtpMatch(data , OtpHashed);
+            let otpMatched = doesOtpMatch(data, OtpHashed);
 
-            if (!otpMatched){
+            if (!otpMatched) {
                 return {
-                    success : false,
-                    reason : "Otps dont match"
+                    success: false,
+                    reason: "Otps dont match"
                 }
             }
 
             // else create tokens
+            const accessToken = accessService.generateAccess(id);
+            const refreshToken = refreshService.generateRefresh(id)
 
 
         } catch (err) {

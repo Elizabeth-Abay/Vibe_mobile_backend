@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 
-function sha1Hasher(valueToBeHashed) {
+function shaHasher(valueToBeHashed) {
     try {
-        return crypto.createHash('sha1').update(valueToBeHashed).digest('hex');
+        return crypto.createHash('sha256').update(valueToBeHashed).digest('hex');
     } catch (err){
         err.from = "from utils sha1Hasher";
 
@@ -11,4 +11,4 @@ function sha1Hasher(valueToBeHashed) {
 }
 
 
-module.exports = sha1Hasher
+module.exports = shaHasher
