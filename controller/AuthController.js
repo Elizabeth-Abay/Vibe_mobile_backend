@@ -32,26 +32,7 @@ class AuthController {
         }
     }
 
-    async enterUserInfo(req, res, next) {
-        try {
-            // username and password
-
-        } catch (err) {
-            err.from = ' AuthControllers.enterUserInfo';
-            next(err);
-        }
-    }
-
-
-    async checkUniqueUserName(req, res, next) {
-        try {
-            // username and password
-
-        } catch (err) {
-            err.from = 'AuthControllers.checkUniqueUserName';
-            next(err);
-        }
-    }
+    
 
 
     async logIn(req, res, next) {

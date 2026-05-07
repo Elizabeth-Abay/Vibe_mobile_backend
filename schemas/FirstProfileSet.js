@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-class UserProfile {
+class UserInfoSchema {
     static userInformationFirstTime = Joi.object({
         userName: Joi.alphanum().length(5).required(),
         password: Joi.string().length(8)
@@ -12,5 +12,5 @@ class UserProfile {
 }
 
 
-module.exports = UserProfile;
+module.exports = UserInfoSchema;
 

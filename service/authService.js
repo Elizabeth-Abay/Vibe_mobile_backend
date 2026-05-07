@@ -70,6 +70,15 @@ class AuthService {
                     reason: "Otps dont match"
                 }
             }
+            // update status of user to verified
+            let gotVerified = await authModelPg.setUserAsVerified(id);
+
+            if (!gotVerified.success) {
+                return {
+                    success : false,
+                    reason : "Couldnt update user status"
+                }
+            }
 
             // else create tokens
 
@@ -98,31 +107,6 @@ class AuthService {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 err.from = 'AuthService.verifyUser';
-            }
-            throw err;
-        }
-    }
-
-    async enterUserInfo(sentInfo) {
-        try {
-            
-
-        } catch (err) {
-            // the lower layers will throw error and the upper layer will be the one to catch that
-            if (typeof err === 'object' && !err.from) {
-                err.from = 'AuthService.enterUserInfo';
-            }
-            throw err;
-        }
-    }
-
-    async checkUniqueUserName(sentInfo) {
-        try {
-
-        } catch (err) {
-            // the lower layers will throw error and the upper layer will be the one to catch that
-            if (typeof err === 'object' && !err.from) {
-                err.from = 'AuthService.checkUniqueUserName';
             }
             throw err;
         }

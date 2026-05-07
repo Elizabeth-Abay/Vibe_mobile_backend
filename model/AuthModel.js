@@ -96,6 +96,32 @@ class AuthModelPg {
     }
 
 
+    async setUserAsVerified(userId) {
+        try {
+            let query = `UPDATE users SET status = verified WHERE id = $1 RETURNING id`;
+            let values = [userId];
+
+            let result = await pg.query(query, values);
+
+            return (result.rowCount === 0) ?
+                {
+                    success: false
+                } :
+                {
+                    success: true
+                }
+
+        } catch (err) {
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthModelPg.setUserAsVerified';
+            }
+            throw err;
+        }
+    }
+
+
     async resendOtp({ email, otpHashed }) {
         try {
             let query = `
