@@ -72,8 +72,26 @@ class AuthService {
             }
 
             // else create tokens
+
             const accessToken = accessService.generateAccess(id);
-            const refreshToken = refreshService.generateRefresh(id)
+            const refreshToken = refreshService.generateRefresh(id);
+
+            if (!accessToken.success || !refreshToken.success) {
+                accessToken.success ? refreshToken : accessToken;
+                // means return either one to be the cause
+            }
+
+            accessToken = accessToken.data;
+            refreshToken = refreshToken.data;
+
+            return {
+                success: true,
+                data: {
+                    accessToken,
+                    refreshToken
+                }
+
+            }
 
 
         } catch (err) {
@@ -87,6 +105,7 @@ class AuthService {
 
     async enterUserInfo(sentInfo) {
         try {
+            
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

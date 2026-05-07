@@ -1,25 +1,20 @@
-// access token - user id and expires at
-// refresh token - user id and iat and expires at
-// why do we need to have random string in ref token
-
-
 const jwt = require('jsonwebtoken');
-// library used to sign ur token
 const dotenv = require('dotenv');
 const path = require('path');
-const crypto = require('crypto');
+
+
 
 const stringGenerator = require('../utils/stringGenerator')
 const refreshTokenModel = require('../model/refreshToken.js');
 const shaHasher = require('../utils/shaHasher');
 
 
+let { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
 dotenv.config({
     path: path.resolve(__dirname, '../../.env')
 });
 
-let { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
 const refreshModel = new refreshTokenModel();
 
@@ -67,67 +62,55 @@ class RefreshToken {
             // sent to the database
             let refToken = await refreshModel.createRef({ userId, hashedRandomString });
 
-            // if putting info into refToken table was successful then sign and send the ref token
+            if (!refToken.success) return refToken
+
 
             // contents of the refresh token
             let refreshToken = jwt.sign({ exp, randomString }, REFRESH_TOKEN_SECRET)
 
             // then return this as a data
             return {
-                data: refreshToken
+                success : true,
+                data: refToken.data
             }
+
         } catch (err) {
-            console.log("Error while Token.generateRefresh ", err.message);
-            return {
-                success: false,
-                reason: "Error while Token.generateRefresh"
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'RefreshToken.generateRefresh';
             }
+            throw err;
         }
     }
 
     async getTokenInfo(hashedTokenString) {
         try {
-            
+
             let result = await refreshModel.getRefTokenInfo(hashedTokenString);
 
-            return {
-                data: re
-            }
+            return result;
 
         } catch (err) {
-            console.log("Error while Token.generateAccessFromRef ", err.message);
-            return {
-                success: false,
-                reason: "Error while Token.generateAccessFromRef"
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'RefreshToken.getTokenInfo';
             }
+            throw err;
         }
     }
 
 
-    async invalidateRefresh(hashedString) {
+    async invalidateRefresh({ oldTokenId, newTokenId }) {
         try {
             // do an update to set isvalid = false
 
-            let res = await refreshModel.invalidateRefresh(hashedString);
+            let res = await refreshModel.invalidateRefresh({ oldTokenId, newTokenId });
 
-            if (!res.success) {
-                return {
-                    success: false,
-                    reason: "Error while calling refreshModel.invalidateRefresh"
-                }
-            }
-
-            return {
-                success: true
-            }
+            return res;
 
         } catch (err) {
-            console.log("Error while Token.invalidateRefresh ", err.message);
-            return {
-                success: false,
-                reason: "Error while Token.invalidateRefresh"
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'RefreshToken.invalidateRefresh';
             }
-
+            throw err;
         }
     }
 
@@ -136,33 +119,20 @@ class RefreshToken {
             // revoke all tokens if expired token used
             let res = await refreshModel.invalidateAll(userId);
 
-            if (!res.success) {
-                return res
-            }
-
-            return {
-                success: true
-            }
-
-
+            return res;
 
         } catch (err) {
-            console.log("Error while Token.invalidateRefresh ", err.message);
-            return {
-                success: false,
-                reason: "Error while Token.invalidateRefresh"
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'RefreshToken.invalidateAllRefresh';
             }
-
+            throw err;
         }
     }
 }
 
 
-const refreshTokenService = new RefreshToken();
-const accessTokenService = new AccessToken();
-
 
 module.exports = {
-    RefreshToken ,
+    RefreshToken,
     AccessToken
 }

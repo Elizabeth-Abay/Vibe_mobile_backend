@@ -1,7 +1,12 @@
 class UserProfile {
     async checkUniqueUserName(userName) {
         try {
+            let query = 'SELECT id FROM users WHERE user_name = $1';
+            let values = [userName];
 
+            let result = await pg.query(query, values);
+
+            return (result.rowCount === 0) ? { success: true } : { success: false }
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
@@ -13,18 +18,18 @@ class UserProfile {
         }
     }
 
-    async settingProfile({ name , userName , email, password }) {
+    async settingProfile({ name, userName, email, password }) {
         try {
-            let query=`
+            let query = `
                 UPDATE users(user_name , password_hashed , name)
                 VALUES($1,$2,$3)
                 WHERE  email=$4
                 RETURNING id
             `
 
-            let values=[userName,password ,name ];
+            let values = [userName, password, name];
 
-            let result = await pg.query(query , values);
+            let result = await pg.query(query, values);
 
 
 
@@ -40,5 +45,5 @@ class UserProfile {
     }
 
 
-    
+
 }
