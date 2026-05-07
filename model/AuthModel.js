@@ -62,11 +62,11 @@ class AuthModelPg {
     }
 
 
-    async getOtp(email) {
+    async getOtp(id) {
         try {
-            let query = 'SELECT otp_hashed FROM users WHERE email=$1 AND otp_expires_at > CURRENT_TIMESTAMP';
+            let query = 'SELECT otp_hashed FROM users WHERE id=$1 AND otp_expires_at > CURRENT_TIMESTAMP';
 
-            let values = [email];
+            let values = [id];
 
             let result = await pg.query(
                 query, values

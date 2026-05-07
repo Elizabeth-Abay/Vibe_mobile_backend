@@ -22,7 +22,7 @@ let { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 const refreshModel = new refreshTokenModel();
 
 class AccessToken {
-    generateAccess(id) {
+    static generateAccess(id) {
         let signedInfo = {
             id
         }
@@ -50,7 +50,7 @@ class AccessToken {
 
 
 class RefreshToken {
-    async generateRefresh(sentInfo) {
+    static async generateRefresh(sentInfo) {
         try {
             // two things to be done in here
             // one sign the randomstring and exp  and send to the client 
@@ -103,7 +103,7 @@ class RefreshToken {
     }
 
 
-    async invalidateRefresh(sentInfo) {
+    static async invalidateRefresh(sentInfo) {
         try {
             // do an update to set isvalid = false
             // sentInfo = { randomString }
@@ -135,8 +135,12 @@ class RefreshToken {
         }
     }
 
+    static invalidateAllRefresh(sentInfo){
+        
+    }
 
-    async generateAccessFromRef(sentInfo) {
+
+    static async generateAccessFromRef(sentInfo) {
         try {
             // steps first get info from database
             // create access from that 
@@ -192,7 +196,7 @@ const refreshTokenService = new RefreshToken();
 const accessTokenService = new AccessToken();
 
 class TokenService {
-    async Handler({ id , randomString , iat }) {
+    static async Handler({ id, randomString, iat }) {
         try {
             // id = userId and iat is the issued date
             // refresh token gets sent
@@ -203,12 +207,12 @@ class TokenService {
 
             let date = 12 // find a way to know the difference
 
-            if (date - iat >= 4){
+            if (date - iat >= 4) {
                 // create a new ref token too
 
                 let res = await refreshTokenService.invalidateRefresh()
 
-                
+
 
 
 

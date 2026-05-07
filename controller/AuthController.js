@@ -9,10 +9,14 @@ class AuthController {
         // to be able to call the global error handler in case of error
         try {
             // validator already called in the routes
-            let result = await authService.createUser()
+            let { data} = await authService.createUser();
+
+            // the data = id of the user
+
+            return res.status(201).json({id : data});
 
         } catch (err) {
-            req.from = "AuthControllers.createUser";
+            err.from = "AuthControllers.createUser";
             next(err); // this will call the error handler
         }
     }
@@ -23,7 +27,7 @@ class AuthController {
             // otp matching 
 
         } catch (err) {
-            req.from = 'AuthControllers.verifyUser';
+            err.from = 'AuthControllers.verifyUser';
             next(err);
         }
     }
@@ -33,7 +37,7 @@ class AuthController {
             // username and password
 
         } catch (err) {
-            req.from = ' AuthControllers.enterUserInfo';
+            err.from = ' AuthControllers.enterUserInfo';
             next(err);
         }
     }
@@ -44,7 +48,7 @@ class AuthController {
             // username and password
 
         } catch (err) {
-            req.from = 'AuthControllers.checkUniqueUserName';
+            err.from = 'AuthControllers.checkUniqueUserName';
             next(err);
         }
     }
@@ -55,7 +59,7 @@ class AuthController {
             // username and password
 
         } catch (err) {
-            req.from = 'AuthControllers.logIn';
+            err.from = 'AuthControllers.logIn';
             next(err);
         }
     }
@@ -66,9 +70,12 @@ class AuthController {
             // username and password
 
         } catch (err) {
-            req.from = 'AuthControllers.logOut';
+            err.from = 'AuthControllers.logOut';
             next(err);
         }
     }
 
 }
+
+
+module.exports = AuthController;
