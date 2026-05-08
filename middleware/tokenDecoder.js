@@ -4,6 +4,7 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const path = require('path');
+const { ref } = require('process');
 
 dotenv.config({
     path: path.resolve(__dirname, '../../.env')
@@ -20,7 +21,15 @@ class TokenDecoder {
             // signedInfo = { id , exp} 
             let token = req.headers['authorization'];
 
-            let access = token.split(' ')[1];
+            let access = token?.split(' ')[1];
+
+            const jwtPattern = /^[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+\.[a-zA-Z0-9-_]+$/;
+
+            if (!access || !!jwtPattern.test(access)) throw Error('the access token not there or not have proper structure');
+
+            
+
+           
 
             let accessDecoded = jwt.verify(access, ACCESS_TOKEN_SECRET);
 
@@ -31,7 +40,7 @@ class TokenDecoder {
 
         } catch (err) {
             err.status = 401;
-            
+
             next(err)
         }
     }
@@ -40,21 +49,19 @@ class TokenDecoder {
 
     static refreshDecoder(req, res, next) {
 
-        let { refreshToken } = req.body;
+        let { refreshToken } = req?.body;
+
 
         try {
+
+            if (!refreshToken) throw Error('the refresh token not there')
             req.decodedRefresh = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
 
             return next();
         } catch (err) {
             err.status = 401;
-            if (err.name === 'TokenExpiredError') {
-                err.message += "Token Expired"
-            }
-
-            else if (err.name === 'JsonWebTokenError') {
-                err.message += 'Invalid Token'
-            }
+            if (err.name === 'TokenExpiredError') err.message = "Session expired. Please login again.";
+            if (err.name === 'JsonWebTokenError') err.message = "Invalid security token.";
 
             next(err);
         }
