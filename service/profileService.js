@@ -1,4 +1,5 @@
 const ProfileModel = require('../model/profileModel');
+const BcryptRelated = require('../utils/bcryptRelated');
 
 const profileModel = new ProfileModel();
 
@@ -20,7 +21,8 @@ class ProfileService {
 
     async enterUserInfo({ id, name, userName, password }) {
         try {
-            let result = await profileModel.settingProfile({ id, name, userName, password });
+            let hashedPassword = await  BcryptRelated.bcryptHasher(password);
+            let result = await profileModel.settingProfile({ id, name, userName, password : hashedPassword});
 
             return result;
 

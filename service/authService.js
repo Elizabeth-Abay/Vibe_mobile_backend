@@ -39,6 +39,7 @@ class AuthService {
             let userInGraph = await authModelGraph.createGraphNode(id);
 
             return {
+                success: true,
                 data: id
             }
 
@@ -75,8 +76,8 @@ class AuthService {
 
             if (!gotVerified.success) {
                 return {
-                    success : false,
-                    reason : "Couldnt update user status"
+                    success: false,
+                    reason: "Couldnt update user status"
                 }
             }
 
@@ -112,8 +113,12 @@ class AuthService {
         }
     }
 
-    async logIn(sentInfo) {
+    async logIn({ email, password }) {
         try {
+
+
+
+
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

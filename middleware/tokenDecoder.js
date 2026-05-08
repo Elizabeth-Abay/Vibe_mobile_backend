@@ -27,14 +27,7 @@ class TokenDecoder {
 
             if (!access || !!jwtPattern.test(access)) throw Error('the access token not there or not have proper structure');
 
-            
-
-           
-
-            let accessDecoded = jwt.verify(access, ACCESS_TOKEN_SECRET);
-
-            req.decodedAccess = accessDecoded;
-
+            req.decodedAccess = jwt.verify(access, ACCESS_TOKEN_SECRET);
 
             return next();
 
@@ -50,7 +43,6 @@ class TokenDecoder {
     static refreshDecoder(req, res, next) {
 
         let { refreshToken } = req?.body;
-
 
         try {
 

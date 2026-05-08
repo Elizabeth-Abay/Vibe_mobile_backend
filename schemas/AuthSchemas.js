@@ -7,8 +7,8 @@ class AuthSchemas {
     });
 
     static verifyUserOtp = Joi.object({
-        userId: Joi.string().uuid().required(),
-        otp: Joi.string().length(6).required()
+        id: Joi.string().uuid().required(),
+        OTP: Joi.string().length(6).required()
     });
 
     static logInValidator = Joi.object({

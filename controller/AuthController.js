@@ -9,11 +9,16 @@ class AuthController {
         // to be able to call the global error handler in case of error
         try {
             // validator already called in the routes
-            let { data} = await authService.createUser();
+            let { email } = req.body;
 
-            // the data = id of the user
+            let result = await authService.createUser(email);
 
-            return res.status(201).json({id : data});
+            return result.success ?
+                res.status(201).json({ id: result.data })
+                :
+                res.status(400).json({ success: false })
+
+            return res.status(201).json({ id: data });
 
         } catch (err) {
             err.from = "AuthControllers.createUser";
@@ -24,7 +29,16 @@ class AuthController {
 
     async verifyUserOtp(req, res, next) {
         try {
-            // otp matching 
+            let { id, OTP } = req.body;
+
+            let result = await authService.verifyUser({ id, OTP })
+
+            return result.success ?
+                res.status(200).json(result.data)
+                :
+                res.status(400).json(result);
+
+            // result.data - contain { accessToken,refreshToken }
 
         } catch (err) {
             err.from = 'AuthControllers.verifyUser';
@@ -32,12 +46,15 @@ class AuthController {
         }
     }
 
-    
+
 
 
     async logIn(req, res, next) {
         try {
-            // username and password
+            // email and password
+            let { email, password } = req.body;
+
+            let result = await authService.logIn({ email, password })
 
         } catch (err) {
             err.from = 'AuthControllers.logIn';
@@ -48,7 +65,7 @@ class AuthController {
 
     async logOut(req, res, next) {
         try {
-            // username and password
+
 
         } catch (err) {
             err.from = 'AuthControllers.logOut';

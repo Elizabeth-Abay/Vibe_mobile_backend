@@ -26,12 +26,13 @@ class AccessToken {
         let currently = Math.floor(Date.now() / 1000); // Convert to seconds
         // expire after 1 hr 
 
-        let signedInfo = {
-            exp: currently + expirationTime,
-            id
-        }
 
-        let accessToken = jwt.sign(signedInfo, ACCESS_TOKEN_SECRET);
+        let accessToken = jwt.sign(
+            {
+                exp: currently + expirationTime,
+                id
+            },
+            ACCESS_TOKEN_SECRET);
 
         return {
             success: true,
@@ -70,7 +71,7 @@ class RefreshToken {
 
             // then return this as a data
             return {
-                success : true,
+                success: true,
                 data: refToken.data
             }
 
