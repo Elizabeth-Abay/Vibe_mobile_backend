@@ -18,6 +18,8 @@ class BcryptRelated {
 
     static async bcryptCompare(unHashedValue, hashedValue) {
         try {
+            // returns a boolean val
+           return await bcrypt.compare(unHashedValue, hashedValue);
 
         } catch (err) {
             err.from = 'BcryptRelated.bcrypt Hasher';

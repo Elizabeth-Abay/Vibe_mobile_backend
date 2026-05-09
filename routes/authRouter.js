@@ -2,6 +2,7 @@ const express = require('express');
 const AuthSchemas = require('../schemas/AuthSchemas');
 const validate = require('../middleware/joiValidator');
 const AuthController = require('../controller/AuthController');
+const TokenDecoder = require('../middleware/tokenDecoder');
 
 
 const authRouter = express.Router();
@@ -20,7 +21,6 @@ authRouter.post('/log-in' , validate(AuthSchemas.logInValidator) , authControlle
 
 
 // sign out 
-// // TO DO :  IMPLEMENT 
-authRouter.post('/log-out' , authController.logOut );
+authRouter.post('/log-out' , TokenDecoder.refreshDecoder , authController.logOut );
 
 module.exports = authRouter;

@@ -152,7 +152,60 @@ class AuthModelPg {
             throw err;
         }
     }
+
+
+    async logIn(email) {
+        try {
+            let query = `
+                SELECT id , password_hashed  
+                FROM users 
+                WHERE email = $1
+                AND status = verified
+                `;
+
+            let values = [email];
+
+            let result = await pg.query(query, values);
+
+            return (result.rowCount === 0) ?
+                {
+                    success: false,
+                    reason: "Account dont exist"
+                }
+                :
+                {
+                    success: true,
+                    data: result.rows[0]
+                }
+
+        } catch (err) {
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthModelPg.resendOtp';
+            }
+            throw err;
+        }
+
+    }
+
+    async logOut(randomString) {
+        try {
+            let query = `
+                UPDATE ref
+            `
+
+        } catch (err) {
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthModelPg.logOut';
+            }
+            throw err;
+        }
+    }
 }
+
 
 
 class AuthModelGraph {

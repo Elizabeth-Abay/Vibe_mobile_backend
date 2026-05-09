@@ -4,6 +4,7 @@ const shaHasher = require('../utils/shaHasher');
 const EmailSendingFunctions = require('./emailSending');
 const doesOtpMatch = require('../utils/OtpMatched');
 const { RefreshToken, AccessToken } = require('./tokenGeneration');
+const BcryptRelated = require('../utils/bcryptRelated');
 
 const authModelPg = new AuthModelPg();
 const authModelGraph = new AuthModelGraph();
@@ -113,12 +114,49 @@ class AuthService {
         }
     }
 
+
+    async resendOtp() {
+
+    }
+
     async logIn({ email, password }) {
         try {
+            let result = await authModelPg.logIn(email);
+
+            if (!result.success) return result;
+
+            // then cr8 access and ref tokens
+            // fetch some posts and some new connections
+
+            let { id, password_hashed } = result.data;
+
+            let passwordsMatched = await BcryptRelated.bcryptCompare(password, password_hashed);
+
+            if (!passwordsMatched) return {
+                success: false,
+                reason : "Password mismatch"
+            }
+
+            const accessToken = accessService.generateAccess(id);
+            const refreshToken = refreshService.generateRefresh(id);
+
+            if (!accessToken.success || !refreshToken.success) {
+                accessToken.success ? refreshToken : accessToken;
+                // means return either one to be the cause
+            }
+
+            accessToken = accessToken.data;
+            refreshToken = refreshToken.data;
 
 
+            return {
+                success: true,
+                data: {
+                    accessToken,
+                    refreshToken
+                }
 
-
+            }
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
@@ -129,8 +167,11 @@ class AuthService {
         }
     }
 
-    async logOut(sentInfo) {
+    async logOut(randomString) {
         try {
+            let hashedRandomString = shaHasher(randomString);
+
+            let result = await authModelPg.logOut(hashedRandomString);
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

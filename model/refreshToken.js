@@ -113,6 +113,17 @@ class RefreshToken {
             throw err
         }
     }
+
+
+    static async invalidateForLogOut(hashedRandom){
+        try{
+            
+
+        } catch (err) {
+            err.from = 'RefreshToken.invalidateForLogOut'
+            throw err
+        }
+    }
 }
 
 

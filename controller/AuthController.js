@@ -47,6 +47,11 @@ class AuthController {
     }
 
 
+    async resendOtp(req, res, next) {
+
+    }
+
+
 
 
     async logIn(req, res, next) {
@@ -54,7 +59,12 @@ class AuthController {
             // email and password
             let { email, password } = req.body;
 
-            let result = await authService.logIn({ email, password })
+            let result = await authService.logIn({ email, password });
+
+            return result.success ?
+                res.status(200).json(result.data) :
+                res.status(400).json(result);
+
 
         } catch (err) {
             err.from = 'AuthControllers.logIn';
@@ -65,6 +75,9 @@ class AuthController {
 
     async logOut(req, res, next) {
         try {
+            let { randomString } = req.decodedRefresh;
+
+            let result = await authService.logOut(randomString);
 
 
         } catch (err) {
