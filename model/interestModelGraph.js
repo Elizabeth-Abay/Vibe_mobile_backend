@@ -119,7 +119,7 @@ class InterestModelG {
         }
     }
 
-    async gettingAllInterest({ id }) {
+    async gettingAllInterest(id) {
         try {
             // we want to get all names of nodes which are linked by interested_in
             let query = `

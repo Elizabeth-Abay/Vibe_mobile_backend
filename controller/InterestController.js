@@ -1,33 +1,34 @@
-// this is where the linking and unlinking of people with interests happen
-class interestLinkerController {
+const InterestService = require('../service/interestService');
+
+
+const interestService = new InterestService();
+
+
+class InterestLinkerController {
     async firstTimeLinking(req, res) {
         try {
             let { id } = req.decodedAccess;
-            let userId = id;
             let { interestedIn } = req.body;
             // { name : value } pairs from frontend bc formdata will be sent
 
 
-            let result = await interestService.linkingInterest({ userId, interestedIn });
+            let result = await interestService.linkingInterest({ id, interestedIn });
 
-            if (result.success) {
-                return res.status(200).json({
-                    success: true,
-                    message: "Interests linked successfully"
-                });
-            }
-
-            return res.status(400).json({
+            return (result.success) ? res.status(200).json({
+                success: true,
+                message: "Interests linked successfully"
+            }) : res.status(400).json({
                 success: false,
                 reason: result.reason
             });
 
         } catch (err) {
-            console.log("Error in link interests route", err.message);
-            return res.status(500).json({
-                success: false,
-                reason: "Internal server error"
-            });
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'InterestLinkerController.firstTimeLinking';
+            }
+            throw err;
         }
     }
 
@@ -35,29 +36,25 @@ class interestLinkerController {
     async updatingLinks(req, res) {
         try {
             let { id } = req.decodedAccess;
-            let userId = id;
             let { interestedIn } = req.body;
 
-            let result = await interestService.updatingLinksOfInterests({ userId, interestedIn });
+            let result = await interestService.updatingLinksOfInterests({ id, interestedIn });
 
-            if (result.success) {
-                return res.status(200).json({
+            return (result.success) ?
+                res.status(200).json({
                     success: true,
                     message: "Interests updated successfully"
+                }) : res.status(400).json({
+                    success: false,
+                    reason: result.reason
                 });
-            }
-
-            return res.status(400).json({
-                success: false,
-                reason: result.reason
-            });
-
         } catch (err) {
-            console.log("Error in update interests route", err.message);
-            return res.status(500).json({
-                success: false,
-                reason: "Internal server error"
-            });
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'InterestLinkerController.updatingLinks';
+            }
+            throw err;
         }
     }
 
@@ -65,8 +62,7 @@ class interestLinkerController {
     async getUserInterests(req, res) {
         try {
             let { id } = req.decodedAccess;
-            let userId = id;
-            let result = await interestService.getAllInterests({ userId });
+            let result = await interestService.getUserInterest(id);
 
             if (result.success) {
                 return res.status(200).json({ message: result.data });
@@ -75,11 +71,15 @@ class interestLinkerController {
             return res.status(400).json({ reason: result.reason })
 
         } catch (err) {
-            console.log("Error in getUserInterests", err.message);
-            return res.status(500).json({
-                success: false,
-                reason: "Internal server error"
-            });
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'InterestLinkerController.getUserInterests';
+            }
+            throw err;
         }
     }
 }
+
+
+module.exports = InterestLinkerController;
