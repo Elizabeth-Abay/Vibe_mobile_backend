@@ -154,6 +154,32 @@ class AuthModelPg {
     }
 
 
+    async putInPassword({ id, passwordHashed }) {
+        try {
+            let query = `
+                UPDATE users 
+                SET password_hashed = $2
+                WHERE id = $1
+                RETURNING id
+                `;
+
+            let values = [id, passwordHashed];
+
+            let result = await pg.query(query, values);
+
+            return (result.rowCount === 0) ? { success: false , reason : "Couldn't put in password" } : { success: true };
+
+        } catch (err) {
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthModelPg.putInPassword';
+            }
+            throw err;
+        }
+    }
+
+
     async logIn(email) {
         try {
             let query = `

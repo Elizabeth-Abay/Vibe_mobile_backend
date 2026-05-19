@@ -12,9 +12,10 @@ class ProfileController {
             let { userName } = req.body;
 
             let result = await profileService.checkUniqueUserName(userName);
+            // checks if user name is unique only
 
             return result.success ?
-                res.status(201).json({ success: true }) :
+                res.status(200).json({ success: true }) :
                 res.status(400).json({ success: false });
 
         } catch (err) {
@@ -42,6 +43,64 @@ class ProfileController {
         }
     }
 
+
+    async settingProfilePic(req, res, next) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ error: "No image file provided." });
+            }
+
+            // Extract buffer data and mimetype from Multer
+            const imageData = req.file.buffer;
+            const imageMime = req.file.mimetype;
+            const userId = req.decodedAccess;
+
+
+            let result = await profileService.updateProfilePic({ id: userId, profilePicData: imageData, profilePicMime: imageMime });
+
+            return (result.success) ?
+                res.status(201).json({ message: 'Successful' }) :
+                res.status(400).json(result);
+
+        } catch (err) {
+            err.from = ' AuthControllers.settingProfilePic';
+            next(err);
+        }
+    }
+
+
+    async updateNameAndBio(req, res, next) {
+        try {
+            let {name = '', bio = '' } = req.body;
+            
+            let { id } = req.decodedAccess;
+
+            let result = await profileService.updateNameAndBio({ ud, name, bio });
+
+            return (result.success) ? res.status(201).json({ success: true }) : res.status(400).json(result);
+
+
+        } catch (err) {
+            err.from = ' AuthControllers.settingProfilePic';
+            next(err);
+        }
+    }
+
+
+    async updateUserName(req, res, next) {
+        try {
+            let { id } = req.decodedAccess;
+            let { userName } = req.body;
+
+            let result = await profileService.updateUserName({id , userName});
+
+            return (result.success) ? res.status(201).json({ success: true }) : res.status(400).json(result);
+
+        } catch (err) {
+            err.from = ' AuthControllers.settingProfilePic';
+            next(err);
+        }
+    }
 
 }
 
