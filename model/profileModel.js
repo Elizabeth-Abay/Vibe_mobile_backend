@@ -161,4 +161,4 @@ class ProfileFristTimeModel {
     }
 }
 
-module.exports = ProfileModel;
+module.exports = ProfileFristTimeModel;

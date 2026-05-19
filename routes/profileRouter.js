@@ -13,6 +13,7 @@ const profileController = new ProfileController();
 
 
 // check if the username is unique
+// will be called everytime the user stops typing in username
 profileRouter.get('/check-unique-username', validate(UserInfoSchema.userNameTakenChecker), TokenDecoder.accessDecode, profileController.checkUniqueUserName);
 
 
@@ -24,9 +25,11 @@ profileRouter.post('/enter-user-info-first-time', validate(UserInfoSchema.userIn
 profileRouter.post('/set-profile-picture', uploads.single('profilePic'), validate(ProfileUpdateSchema.updateProfilePic), TokenDecoder.accessDecode, profileController.settingProfilePic);
 
 
+// setting bio and name
 profileRouter.post('/set-bio-and-name', validate(ProfileUpdateSchema.updateBioAndName), TokenDecoder.accessDecode, profileController.updateNameAndBio);
 
 
+// updating their username
 profileRouter.post('/set-user-name', validate(ProfileUpdateSchema.updateUserName) , TokenDecoder.accessDecode, profileController.updateUserName)
 
 
