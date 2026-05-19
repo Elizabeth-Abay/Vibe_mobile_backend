@@ -1,3 +1,18 @@
+const driver = require('../config/neo4jConfig');
+
+
+const session = driver.session();
+
+const sessionToWrite = driver.session({
+    defaultAccessMode: session.WRITE
+})
+
+const sessionToRead = driver.session({
+    defaultAccessMode: session.READ
+})
+
+
+
 class InterestModelG {
     async linkingUserWithInterests(sentInfo) {
         try {
@@ -27,7 +42,7 @@ class InterestModelG {
 
 
             return (result.records[0]?.length === 0) ? { success: false } : { success: true }
-           
+
 
         } catch (err) {
             console.log("Error while GraphActivities.linkingUserWithInterests ", err.message);
@@ -39,14 +54,11 @@ class InterestModelG {
         }
     }
 
-    async updatingLinksOfInterests(sentInfo) {
+    async deletingLinks(sentInfo) {
         try {
-            // sentInfo = { userId , interests : [ { name , rated_as }]}
-            // first delete all the links
-            // then recreate them
 
             let queryToDel = `
-            MATCH (n:Person) WHERE n.userId = $userId
+            MATCH (n:Person) WHERE n.id = $id
             MATCH (n)-[r:INTERESTED_IN]->()
             DELETE r
             RETURN n
@@ -61,15 +73,37 @@ class InterestModelG {
                 }
             )
 
-            if (delRes.records[0]?.length === 0) {
-                return {
-                    success: false,
-                    reason: "Database issue while deleting old interest links"
-                }
+            return (delRes.records[0]?.length === 0) ? {
+                success: false,
+                reason: "Database issue while deleting old interest links"
+            } : {
+                success: true
             }
 
-            let res = this.linkingUserWithInterests(sentInfo);
-            // recreate interest links
+
+        } catch (err) {
+            console.log("Error while GraphActivities.updatingLinksOfInterests ", err.message);
+            return {
+                success: false,
+                reason: "Error while GraphActivities.updatingLinksOfInterests"
+            }
+
+
+
+        }
+    }
+
+    async updatingLinksOfInterests(sentInfo) {
+        try {
+            // sentInfo = { id , interests : [ { name , rated_as }]}
+            // first delete all the links then recreate them
+
+
+            let deleting = await this.deletingLinks(sentInfo);
+
+            if (!deleting.success) return deleting;
+
+            let res = await this.linkingUserWithInterests(sentInfo);
 
             return res;
 
@@ -85,9 +119,8 @@ class InterestModelG {
         }
     }
 
-    async gettingAllInterest(sentInfo) {
+    async gettingAllInterest({ id }) {
         try {
-            let { userId } = sentInfo;
             // we want to get all names of nodes which are linked by interested_in
             let query = `
             MATCH (u:Person) WHERE u.userId = $userId
@@ -102,14 +135,16 @@ class InterestModelG {
                     )
                 }
             )
+
             // res.records[0]._fields this is an array made up of 2 arrays 
             // the front end only needs the [{ name , rated_as}]
             // so loop through both arrays in the service layer  
 
-            return {
+            return (res.records[0].length === 0) ? { success: false } : {
                 success: true,
                 data: res.records[0]._fields
             }
+
 
         } catch (err) {
             console.log("Error while GraphActivities.gettingAllInterest ", err.message);

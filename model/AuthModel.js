@@ -234,39 +234,6 @@ class AuthModelPg {
 
 
 
-class AuthModelGraph {
-    async createGraphNode(userid) {
-        try {
-            // create a node
-            let res = await sessionToWrite.executeWrite(
-                tx => {
-                    return tx.run(
-                        `CREATE (n:Person { userId : $userid }) RETURN n`,
-                        {
-                            userid
-                        }
-                    )
-                }
-            )
 
 
-            return {
-                success: true
-            }
-        } catch (err) {
-            // the lower layers will throw error and the upper layer will be the one to catch that
-            if (typeof err === 'object' && !err.from) {
-                // this is so that if lower layer's message won't be masked
-                err.from = 'AuthModelGraph.createGraphNode';
-            }
-            throw err;
-        }
-
-    }
-}
-
-
-module.exports = {
-    AuthModelPg,
-    AuthModelGraph
-}
+module.exports = AuthModelPg

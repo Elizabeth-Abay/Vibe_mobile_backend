@@ -1,4 +1,5 @@
-const { AuthModelPg, AuthModelGraph } = require('../model/AuthModel');
+const AuthModelPg = require('../model/AuthModel');
+const AuthModelGraph = require('../model/AuthModelG');
 const generateOTP = require('../utils/otpGenerator');
 const shaHasher = require('../utils/shaHasher');
 const EmailSendingFunctions = require('./emailSending');
