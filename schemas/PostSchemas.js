@@ -45,7 +45,7 @@ class PostSchemas {
             destination: Joi.string().required(),
             filename: Joi.string().required(),
             path: Joi.string().required()
-        }),
+        }).optional(),
 
 
     });
