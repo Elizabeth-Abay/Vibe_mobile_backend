@@ -94,7 +94,7 @@ class ConnectionController {
     async getAllConnections(req, res) {
         try {
             let { id } = req.decodedAccess;
-            let result = await getConnectionsServiceObj.getAllConnections({ userId: id });
+            let result = await getConnectionsServiceObj.getAllConnections(id);
 
             return (result.success) ? res.status(200).json(result) : res.status(400).json(result);
 
@@ -107,7 +107,7 @@ class ConnectionController {
     async getSentRequests(req, res) {
         try {
             let { id } = req.decodedAccess;
-            let result = await getConnectionsServiceObj.getSentRequests({ userId: id });
+            let result = await getConnectionsServiceObj.getSentRequests(id);
 
             return (result.success) ? res.status(200).json(result) : res.status(400).json(result);
 
