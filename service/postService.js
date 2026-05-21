@@ -30,21 +30,17 @@ class PostService {
     }
 
 
-    async createPost({
-        id,
-        categorySelected,
-        postTitle,
-        postContent,
-        postImage
-    }) {
+    async createPost({ id, categorySelected, postTitle, postContent, postImage }) {
         try {
+
+
             // putting the information in postgres table and link to graph
-            let {}
-            let query = `
-                    INSERT INTO posts (user_id, title, content, image, category)
-                    VALUES ($1, $2, $3, $4, $5)
-                    RETURNING id;
-                `;
+            // one post many categories in that case we uw
+            let { mimetype } = postImage;
+
+            let postIn = await postModel.makePost({ id, categorySelected, postTitle, postContent, mimetype });
+
+            return postIn;
 
 
         } catch (err) {
@@ -53,3 +49,6 @@ class PostService {
         }
     }
 }
+
+
+module.exports = PostService;

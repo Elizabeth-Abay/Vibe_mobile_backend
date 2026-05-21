@@ -19,15 +19,35 @@ class PostModel {
 
             let values = [postIdArray];
 
-            let result = await pg.query(query,values);
+            let result = await pg.query(query, values);
 
             return {
-                success : true,
-                data : result.rows
+                success: true,
+                data: result.rows
             }
 
         } catch (err) {
             err.from = 'PostModel.extractPostInformation';
+            next(err);
+        }
+    }
+
+    async makePost({  id, categorySelected, postTitle, postContent , mimetype }) {
+        try {
+            let query = `
+                    INSERT INTO posts (user_id, title, content, image , category)
+                    VALUES ($1, $2, $3, $4, $5)
+                    RETURNING id;
+                `;
+
+            let values = [id, postTitle, postContent, mimetype, categorySelected];
+
+            let result = await pg.query(query , values);
+
+            return (result.rowCount === 0) ? { success : false , reason : "Couldnt put in post"} : { success : true}
+
+        } catch (err) {
+            err.from = 'PostModel.makePost';
             next(err);
         }
     }

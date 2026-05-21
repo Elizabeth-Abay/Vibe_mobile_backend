@@ -6,7 +6,6 @@ const postService = new PostService();
 class PostController {
     async getPostsInACategory(req, res, next) {
         try {
-
             let { categorySelected } = req.body;
 
             let result = await postService.getPostsInACategory(categorySelected);
@@ -46,6 +45,9 @@ class PostController {
             });
 
 
+            return (result.success) ?
+                res.status(200).json(result) : res.status(400).json({ message: 'Couldnt load post' });
+
         } catch (err) {
             err.from = 'PostController.makeAPost';
             next(err);
@@ -53,3 +55,7 @@ class PostController {
 
     }
 }
+
+
+
+module.exports = PostController;
