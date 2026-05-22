@@ -47,7 +47,7 @@ class ConnectionController {
             let { id } = req.decodedAccess;
             let { rejectedId } = req.body;
 
-            let result = await connServiceObj.rejectingConnection({ rejectorId: id, rejectedId });
+            let result = await connServiceObj.rejectingConnection({ id, rejectedId });
 
             return (result.success) ? res.status(200).json({ success: true }) : res.status(400).json(result);
 
@@ -57,16 +57,11 @@ class ConnectionController {
         }
     }
 
-
-    
-
-
-    async disconnectController(req, res) {
+    async disconnectConnection(req, res) {
         try {
-            // {userId , deletedId}
             let { id } = req.decodedAccess;
-            let { deletedId } = req.body;
-            let result = await connServiceObj.disConnection({ userId, deletedId });
+            let { disconnectedId } = req.body;
+            let result = await connServiceObj.disConnection({ id, disconnectedId });
 
             return (result.success) ? res.status(200).json({ success: true }) : res.status(400).json(result);
 
@@ -98,9 +93,7 @@ class ConnectionController {
             let { id } = req.decodedAccess;
             let result = await getConnectionsServiceObj.getMatchedConnections({ userId: id });
 
-            if (result.success && !result.matched) return res.status(200).json({ data: [] });
-
-            return (result.success) ? res.status(200).json(result.profiles) : res.status(400).json(result);
+            return (result.success) ? res.status(200).json(result.data) : res.status(400).json(result);
 
         } catch (err) {
             err.from = 'ConnectionController.getMatchedConnections';

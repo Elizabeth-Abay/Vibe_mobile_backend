@@ -1,26 +1,18 @@
-const { graphUponConnectingAndDisconnecting } = require('../model/graphThings');
-const { getRequestHandler } = require('../model/graphThings');
-// we need to send the profile picture , id and username
-// so get id arrays from the graph and get the pic and username from postgres
-const { profileService } = require('./profileRelated.js');
-
-let connectionGraph = new graphUponConnectingAndDisconnecting();
-let requestHandlerService = new getRequestHandler();
-let profileGetterServiceObj = new profileService();
-
-
-
-
+const ConnectionModel = require('../model/connectionModel.js');
 const NotificationModel = require('../model/notificationModel.js');
+const UserProfileGetter = require('../model/UserProfileGetHelper.js');
 
 
+const connectionModel = new ConnectionModel();
 const notificationModel = new NotificationModel();
 
-class connectionService {
-    async requestingConnection(sentInfo) {
+
+
+class ConnectionService {
+    async requestingConnection({ id, connectToId }) {
         try {
             // sentInfo = { id , connectToId}
-            let res = await connectionGraph.connectReq(sentInfo);
+            let res = await connectionModel.connectReq({ id, connectToId });
 
             return (res.success) ? { success: true } : { success: false, reason: "data base problem from requestingConnection" }
 
@@ -28,7 +20,7 @@ class connectionService {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
+                err.from = 'ConnectionService.requestingConnection';
             }
             throw err;
         }
@@ -39,7 +31,7 @@ class connectionService {
     async acceptingConnection({ acceptorId, acceptedId }) {
         try {
             // when u accept create a row in notification table
-            let result = await connectionGraph.acceptingRequest({ acceptorId, acceptedId });
+            let result = await connectionModel.acceptingRequest({ acceptorId, acceptedId });
 
             // then create a row in the notifications table for the user to see
             if (!result.succcess) return result;
@@ -53,7 +45,7 @@ class connectionService {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
+                err.from = 'ConnectionService.acceptingConnection';
             }
             throw err;
         }
@@ -61,10 +53,10 @@ class connectionService {
     }
 
 
-    async rejectingConnection(sentInfo) {
+    async rejectingConnection({ id, rejectedId }) {
         try {
             // { userId , rejectedId }
-            let res = await connectionGraph.rejectAReq(sentInfo);
+            let res = await connectionModel.rejectAReq({ id, rejectedId });
 
             return (res.success) ? { success: true } : { success: false, reason: "data base problem from rejectingConnection" }
 
@@ -72,7 +64,7 @@ class connectionService {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
+                err.from = 'ConnectionService.rejectingConnection';
             }
             throw err;
         }
@@ -80,10 +72,9 @@ class connectionService {
 
 
 
-    async disConnection(sentInfo) {
+    async disConnection({ id, disconnectedId }) {
         try {
-            // sentInfo = {userId , deletedId}
-            let res = await connectionGraph.disConnecting(sentInfo);
+            let res = await connectionModel.disConnecting({ id, disconnectedId });
 
             return (res.success) ? { success: true } : { success: false, reason: "data base problem from disConnection" }
 
@@ -91,7 +82,7 @@ class connectionService {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
+                err.from = 'ConnectionService.disConnection';
             }
             throw err;
         }
@@ -99,83 +90,29 @@ class connectionService {
     }
 
 
-    async getMatchedConnections(sentInfo) {
+    async getMatchedConnections(id) {
         try {
-            // sentInfo = { userId }
-            let { userId } = sentInfo;
-            console.log("userId from getMatchedConnections ", userId);
-            let res = await requestHandlerService.matchedUsers({ userId });
+
+            let res = await requestHandlerService.matchedUsers(id);
             console.log("result from requestHandlerService.matchedUsers ", res)
 
 
-            if (!res.success) {
-                return {
-                    success: false,
-                    reason: "data base problem from getMatchedConnections"
-                }
-            }
+            if (!res.success || (res.data.length === 0)) return res;
 
 
+            let resultArr = res.data;
 
-            if (res.lengthMatched === 0) {
-                return {
-                    success: true,
-                    matched: false
-                }
-                // matched : false means there is no one who shares an interest with u
-            }
+            let profiles = await UserProfileGetter.getProfileInfo(resultArr);
 
+            if (!profiles.success) return profiles;
 
-            let resultArr = res.data || [];
-
-            // bc the user may not be matched
-            // the resultArr = [ { userId , sharedInterests : [ 'football' , 'basketball']}]
-            // collect their id
-            let matchedPPlID = resultArr.map(
-                match => (match.userId)
-            );
-
-            let profiles = [];
-            if (matchedPPlID.length !== 0) {
-                profiles = await profileGetterServiceObj.getProfileService({ userIds: matchedPPlID }) || [];
-            }
-
-            if (profiles.length === 0) {
-                return {
-                    success: false,
-                    reason: "Profile length is 0"
-                }
-            }
-
-            // profiles = [ {path , username , id } ]
-            // what if users have are matched but they dont have a profile yet 
-            // path will be null and that will be handled by the front end
-            console.log("profiles ", profiles)
-
-            // attach the shared interests to the profiles array objects
-            for (let pp of profiles.data) {
-                // get the key and look for the shared interest
-                let id = pp.id;
-                // then get the value from the array with simmilar id
-                let item = resultArr.find(
-                    r => r.userId === id
-                );
-
-                pp.sharedInterests = (item && item.sharedInterests) ? item.sharedInterests : [];
-            }
-
-            // profiles = [ { path , username , id , sharedInterests }]
-
-            return {
-                success: true,
-                profiles
-            };
+            return profiles;
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
+                err.from = 'ConnectionService.getMatchedConnections';
             }
             throw err;
         }
@@ -206,7 +143,7 @@ class connectionService {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
+                err.from = 'ConnectionService.getAllConnections';
             }
             throw err;
         }
@@ -215,6 +152,6 @@ class connectionService {
 
 
 
-module.exports = { getMatchedConnectionsService, connectionService };
+module.exports = ConnectionService;
 
 

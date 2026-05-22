@@ -1,4 +1,4 @@
-class GraphConnection {
+class ConnectionModel {
     async connectReq(sentInfo) {
         try {
             // sentInfo = { id , connectToId}
@@ -31,10 +31,10 @@ class GraphConnection {
 
     async rejectAReq(sentInfo) {
         try {
-            // sentInfo = { userId , rejectedId }
+            // sentInfo = { id , rejectedId }
             let query = `
-                MATCH (requestor:Person)  WHERE requestor.userId = $rejectedId
-                MATCH (rejector:Person)  WHERE rejector.userId = $userId
+                MATCH (requestor:Person)  WHERE requestor.id = $rejectedId
+                MATCH (rejector:Person)  WHERE rejector.id = $id
                 MATCH (requestor)-[r:request_Connect]->(rejector)
                 DETACH DELETE r
                 RETURN rejector
@@ -69,8 +69,8 @@ class GraphConnection {
         try {
             // sentInfo = {acceptorId , acceptedId }
             let query = `
-                MATCH (accpetor:Person) WHERE accpetor.userId = $acceptorId
-                MATCH (accepted:Person) WHERE accepted.userId = $acceptedId
+                MATCH (accpetor:Person) WHERE accpetor.id = $acceptorId
+                MATCH (accepted:Person) WHERE accepted.id = $acceptedId
                 MATCH (accepted)-[r:request_Connect]->(accpetor)
                 MERGE (accepted)-[c:Connected]->(accpetor)
                 ON CREATE SET c.since = ${Date.now()}
@@ -112,10 +112,10 @@ class GraphConnection {
 
     async disConnecting(sentInfo) {
         try {
-            // sentInfo = {userId , deletedId}
+            // sentInfo = {id , disconnectedId}
             let query = `
-                MATCH (disconnector:Person) WHERE disconnector.userId = $userId
-                MATCH (disconnected:Person) WHERE disconnected.userId = $disconnectedId
+                MATCH (disconnector:Person) WHERE disconnector.id= $id
+                MATCH (disconnected:Person) WHERE disconnected.id= $disconnectedId
                 MATCH (disconnector)-[r:Connected]-(disconnected)
                 DETACH DELETE r
                 RETURN disconnected
@@ -220,26 +220,26 @@ class GraphConnection {
             )
 
             if (!res) return {
-                success: false
+                success: false,
+                reason : "Couldnt find the matched users"
             }
 
 
-            if (res.records.length === 0) {
-                return {
-                    success: true,
-                    data: []
-                }
+            if (res.records.length === 0) return {
+                success: true,
+                data: []
             }
+
 
             // res.records is an array
             // so we can use .map method on it
-            let matchedUsers = res.records.map(record => ({
-                userId: record.get('matchedUserId'),
-                sharedInterests: record.get('sharedInterests')
-            }));
+            let matchedUsers = res.records.map(record => record.get('matchedUserId'));
+            // sharedInterests: record.get('sharedInterests') - ignored this part
+
 
 
             // matchedUsers = [ { userId , sharedInterests }]
+            // matchedUsers = [ userIds ]
 
             return {
                 success: true,
@@ -257,7 +257,7 @@ class GraphConnection {
 }
 
 
-module.exports = GraphConnection;
+module.exports = ConnectionModel;
 
 
 
