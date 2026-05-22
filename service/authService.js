@@ -70,11 +70,11 @@ class AuthService {
 
             if (!result.success) return result;
 
-            let { data } = result;
+            let { otp_hashed } = result.data;
 
-            console.log("db ", data, "hashed ", OtpHashed);
+            console.log("db ", otp_hashed, "hashed ", OtpHashed);
 
-            let otpMatched = doesOtpMatch(data, OtpHashed);
+            let otpMatched = doesOtpMatch(otp_hashed, OtpHashed);
 
             if (!otpMatched) {
                 return {
@@ -94,8 +94,9 @@ class AuthService {
 
             // else create tokens
 
-            const accessToken = accessService.generateAccess(id);
-            const refreshToken = refreshService.generateRefresh(id);
+            let accessToken = accessService.generateAccess(id);
+            let refreshToken = await refreshService.generateRefresh(id);
+            // console.log("ref " , refreshToken);
 
             if (!accessToken.success || !refreshToken.success) {
                 accessToken.success ? refreshToken : accessToken;
@@ -104,6 +105,10 @@ class AuthService {
 
             accessToken = accessToken.data;
             refreshToken = refreshToken.data;
+
+            // console.log("refreshToken from ser" , refreshToken );
+
+            
 
             return {
                 success: true,
@@ -147,8 +152,10 @@ class AuthService {
                 reason: "Password mismatch"
             }
 
-            const accessToken = accessService.generateAccess(id);
-            const refreshToken = refreshService.generateRefresh(id);
+
+            let accessToken = accessService.generateAccess(id);
+            let refreshToken = await refreshService.generateRefresh(id);
+            // console.log("ref " , refreshToken);
 
             if (!accessToken.success || !refreshToken.success) {
                 accessToken.success ? refreshToken : accessToken;
@@ -158,6 +165,9 @@ class AuthService {
             accessToken = accessToken.data;
             refreshToken = refreshToken.data;
 
+            // console.log("refreshToken from ser" , refreshToken );
+
+            
 
             return {
                 success: true,
@@ -167,6 +177,8 @@ class AuthService {
                 }
 
             }
+
+            
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

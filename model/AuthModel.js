@@ -190,7 +190,7 @@ class AuthModelPg {
                 SELECT id , password_hashed  
                 FROM users 
                 WHERE email = $1
-                AND status = verified
+                AND status = 'verified'
                 `;
 
             let values = [email];

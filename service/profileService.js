@@ -71,6 +71,7 @@ class ProfileService {
 
             else whichUpdated = 'both';
 
+
             let result = await profileModel.settingNameAndBio({ id, name, bio, whichUpdated });
 
             return result;

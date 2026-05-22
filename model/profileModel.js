@@ -85,34 +85,45 @@ class ProfileFristTimeModel {
             // wld do an update request to your bio
             // using the desktop as storage currently so better use update command
             let query;
+            let values;
 
             if (whichUpdated === 'name') {
                 query = `
-                UPDATE profile_info 
-                SET name = $2
-                WHERE user_id = $1
-                RETURNING *`
+                    UPDATE profile_info 
+                    SET name = $2
+                    WHERE user_id = $1
+                    RETURNING *
+                `;
+
+                values = [id, name];
+
             }
 
             else if (whichUpdated === 'bio') {
                 query = `
-                UPDATE profile_info 
-                SET bio = $3
-                WHERE user_id = $1
-                RETURNING *`
+                    UPDATE profile_info 
+                    SET bio = $2
+                    WHERE user_id = $1
+                    RETURNING *
+                    `;
+
+                values = [id,  bio];
             }
 
             else {
                 query = `
-                UPDATE profile_info 
-                SET name = $2 , bio = $3
-                WHERE user_id = $1
-                RETURNING *
-            `;
+                    UPDATE profile_info 
+                    SET name = $2 , bio = $3
+                    WHERE user_id = $1
+                    RETURNING *
+                `;
+
+                values = [id, name, bio];
+
 
             }
 
-            let values = [id, name, bio];
+
 
             let result = await pool.query(query, values);
 

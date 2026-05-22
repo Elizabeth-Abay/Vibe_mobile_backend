@@ -28,7 +28,7 @@ server.use('/connection', connectionRouter);
 server.use('/interest', interestRouter);
 server.use('/notification', notificationRouter);
 server.use('/post', postRouter);
-server.use('/profile', profileRouter);
+server.use('/profile', profileRouter); // -- worked
 server.use('/request', requestRouter);
 server.use('/token', tokenRouter);
 

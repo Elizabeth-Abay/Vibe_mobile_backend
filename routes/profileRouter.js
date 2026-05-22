@@ -13,23 +13,24 @@ const profileController = new ProfileController();
 
 
 // check if the username is unique
-// will be called everytime the user stops typing in username
-profileRouter.get('/check-unique-username', validate(UserInfoSchema.userNameTakenChecker), TokenDecoder.accessDecode, profileController.checkUniqueUserName);
+// will be called everytime the user stops typing in username -- works
+profileRouter.post('/check-unique-username', validate(UserInfoSchema.userNameTakenChecker), TokenDecoder.accessDecode, profileController.checkUniqueUserName);
 
 
-// enter password , username for a user
+// enter password , username for a user -- works
 profileRouter.post('/enter-user-info-first-time', validate(UserInfoSchema.userInformationFirstTime), TokenDecoder.accessDecode, profileController.enterUserInfo);
 
 
-// set up profile picture
-profileRouter.post('/set-profile-picture', uploads.single('profilePic'), validate(ProfileUpdateSchema.updateProfilePic), TokenDecoder.accessDecode, profileController.settingProfilePic);
+//  validate(ProfileUpdateSchema.updateProfilePic)
+// set up profile picture -- works
+profileRouter.post('/set-profile-picture', uploads.single('profilePic'), TokenDecoder.accessDecode, profileController.settingProfilePic);
 
 
-// setting bio and name
+// setting bio and name  -- works
 profileRouter.post('/set-bio-and-name', validate(ProfileUpdateSchema.updateBioAndName), TokenDecoder.accessDecode, profileController.updateNameAndBio);
 
 
-// updating their username
+// updating their username -- works
 profileRouter.post('/set-user-name', validate(ProfileUpdateSchema.updateUserName) , TokenDecoder.accessDecode, profileController.updateUserName)
 
 

@@ -19,7 +19,9 @@ class ProfileController {
                 res.status(400).json({ success: false });
 
         } catch (err) {
-            err.from = 'AuthControllers.checkUniqueUserName';
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'ProfileController.checkUniqueUserName';
+            }
             next(err);
         }
     }
@@ -38,7 +40,10 @@ class ProfileController {
                 res.status(400).json({ success: false });
 
         } catch (err) {
-            err.from = ' AuthControllers.enterUserInfo';
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'ProfileController.enterUserInfo';
+
+            }
             next(err);
         }
     }
@@ -52,17 +57,19 @@ class ProfileController {
 
             // Extract buffer data and mimetype from Multer
             const imageUrl = req.file.path;
-            const userId = req.decodedAccess;
+            const { id } = req.decodedAccess;
 
 
-            let result = await profileService.updateProfilePic({ id: userId,  profilePicUrl: imageUrl });
+            let result = await profileService.updateProfilePic({ id, profilePicUrl: imageUrl });
 
             return (result.success) ?
                 res.status(201).json({ message: 'Successful' }) :
                 res.status(400).json(result);
 
         } catch (err) {
-            err.from = ' AuthControllers.settingProfilePic';
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'ProfileController.settingProfilePic';
+            }
             next(err);
         }
     }
@@ -70,17 +77,20 @@ class ProfileController {
 
     async updateNameAndBio(req, res, next) {
         try {
-            let {name = '', bio = '' } = req.body;
-            
+            let { name = '', bio = '' } = req.body;
+
             let { id } = req.decodedAccess;
 
-            let result = await profileService.updateNameAndBio({ ud, name, bio });
+            let result = await profileService.updateNameAndBio({ id, name, bio });
 
             return (result.success) ? res.status(201).json({ success: true }) : res.status(400).json(result);
 
 
         } catch (err) {
-            err.from = ' AuthControllers.settingProfilePic';
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'ProfileController.updateNameAndBio';
+            }
+
             next(err);
         }
     }
@@ -91,12 +101,14 @@ class ProfileController {
             let { id } = req.decodedAccess;
             let { userName } = req.body;
 
-            let result = await profileService.updateUserName({id , userName});
+            let result = await profileService.updateUserName({ id, userName });
 
             return (result.success) ? res.status(201).json({ success: true }) : res.status(400).json(result);
 
         } catch (err) {
-            err.from = ' AuthControllers.settingProfilePic';
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'ProfileController.settingProfilePic';
+            }
             next(err);
         }
     }

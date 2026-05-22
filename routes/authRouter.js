@@ -9,14 +9,14 @@ const authRouter = express.Router();
 const authController = new AuthController();
 
 
-// to create a user - by receiving the email only
+// to create a user - by receiving the email only -- works
 authRouter.post('/create-a-user' , validate(AuthSchemas.registrationChecker) , authController.createUser);
 
-// to verify the user
+// to verify the user -- works
 authRouter.post('/verify-user-otp' , validate(AuthSchemas.verifyUserOtp) , authController.verifyUserOtp);
 
 
-// sign in
+// sign in -- works
 authRouter.post('/log-in' , validate(AuthSchemas.logInValidator) , authController.logIn);
 
 
