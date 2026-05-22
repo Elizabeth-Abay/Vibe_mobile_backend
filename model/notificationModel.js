@@ -1,3 +1,5 @@
+const pool = require('../config/pgConfig');
+
 class NotificationModel {
     async getNotifications(id) {
         try {
@@ -18,7 +20,7 @@ class NotificationModel {
             let values = [id];
 
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             // if it is empty then it means no new notification is there
             return {
@@ -47,7 +49,7 @@ class NotificationModel {
 
             let values = [notifierId, notifyToId, type];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ? { success: true } : { success: false, reason: "Couldnt create a notification instance" }
 

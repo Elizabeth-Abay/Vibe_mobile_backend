@@ -1,3 +1,5 @@
+const pool = require('../config/pgConfig');
+
 class AuthModelPg {
     async checkUserExist(email) {
         try {
@@ -6,7 +8,7 @@ class AuthModelPg {
             // bc if result of this is null - new else reject
             let values = [email, 'verified'];
 
-            let result = await pg.query(
+            let result = await pool.query(
                 query, values
             );
 
@@ -42,7 +44,7 @@ class AuthModelPg {
 
             let values = [email, otpHashed];
 
-            let result = await pg.query(
+            let result = await pool.query(
                 query, values
             )
 
@@ -68,7 +70,7 @@ class AuthModelPg {
 
             let values = [id];
 
-            let result = await pg.query(
+            let result = await pool.query(
                 query, values
             )
 
@@ -101,7 +103,7 @@ class AuthModelPg {
             let query = `UPDATE users SET status = 'verified' WHERE id = $1 RETURNING id`;
             let values = [userId];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ?
                 {
@@ -134,7 +136,7 @@ class AuthModelPg {
 
             let values = [otpHashed, email];
 
-            let result = await pg.query(
+            let result = await pool.query(
                 query, values
             );
 
@@ -165,7 +167,7 @@ class AuthModelPg {
 
             let values = [id, passwordHashed];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ? { success: false , reason : "Couldn't put in password" } : { success: true };
 
@@ -191,7 +193,7 @@ class AuthModelPg {
 
             let values = [email];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ?
                 {

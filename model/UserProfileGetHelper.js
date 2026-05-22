@@ -1,3 +1,6 @@
+const pool = require('../config/pgConfig');
+
+
 class UserProfileGetter {
     // given array of ids get their picture , username and name
     static async getProfileInfo(userIdArr) {
@@ -16,7 +19,7 @@ class UserProfileGetter {
             let values = [userIdArr];
 
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ?
                 {

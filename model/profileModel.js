@@ -1,3 +1,5 @@
+const pool = require('../config/pgConfig');
+
 class ProfileFristTimeModel {
 
     async checkUniqueUserName(userName) {
@@ -6,7 +8,7 @@ class ProfileFristTimeModel {
             let query = 'SELECT id FROM profile_info WHERE user_name = $1';
             let values = [userName];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ? { success: true } : { success: false }
 
@@ -31,7 +33,7 @@ class ProfileFristTimeModel {
 
             let values = [name, userName, id];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ? { success: false } : { success: true }
 
@@ -61,7 +63,7 @@ class ProfileFristTimeModel {
 
             let values = [id, profilePicUrl];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ? { success: false } : { success: true }
 
@@ -112,7 +114,7 @@ class ProfileFristTimeModel {
 
             let values = [id, name, bio];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
 
             return (result.rowCount === 0) ? { success: false } : { success: true }
@@ -143,7 +145,7 @@ class ProfileFristTimeModel {
 
             let values = [id, userName];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rowCount === 0) ? { success: false } : { success: true }
 

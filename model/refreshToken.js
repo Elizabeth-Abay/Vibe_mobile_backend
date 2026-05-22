@@ -1,10 +1,12 @@
+const pool = require('../config/pgConfig');
+
 class RefreshToken {
     async createRef({ userId, hashedRandomString }) {
         try {
             let query = 'INSERT INTO refresh_token(user_id , token_hash) VALUES ($1 , $2) RETURNING id'
             let values = [userId, hashedRandomString];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rows.length === 0) ?
                 {
@@ -36,7 +38,7 @@ class RefreshToken {
 
             let values = [hashedTokenString];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return result.rows.length === 0 ?
                 {
@@ -68,7 +70,7 @@ class RefreshToken {
                 `
             let values = [oldTokenId, newTokenId];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return (result.rows.length === 0) ?
                 {
@@ -96,7 +98,7 @@ class RefreshToken {
                 `;
             let values = [userId];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
 
             return {

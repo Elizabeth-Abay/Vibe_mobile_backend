@@ -1,3 +1,6 @@
+const pool = require('../config/pgConfig');
+
+
 class PostModel {
     async extractPostInformation(postIdArray) {
         try {
@@ -19,7 +22,7 @@ class PostModel {
 
             let values = [postIdArray];
 
-            let result = await pg.query(query, values);
+            let result = await pool.query(query, values);
 
             return {
                 success: true,
@@ -42,7 +45,7 @@ class PostModel {
 
             let values = [id, postTitle, postContent, postImage, categorySelected];
 
-            let result = await pg.query(query , values);
+            let result = await pool.query(query , values);
 
             return (result.rowCount === 0) ? { success : false , reason : "Couldnt put in post"} : { success : true , data : result.rows[0]}
 
