@@ -44,7 +44,7 @@ class PostModel {
 
             let result = await pg.query(query , values);
 
-            return (result.rowCount === 0) ? { success : false , reason : "Couldnt put in post"} : { success : true}
+            return (result.rowCount === 0) ? { success : false , reason : "Couldnt put in post"} : { success : true , data : result.rows[0]}
 
         } catch (err) {
             err.from = 'PostModel.makePost';

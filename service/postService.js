@@ -33,15 +33,20 @@ class PostService {
     async createPost({ id, categorySelected, postTitle, postContent, postImage }) {
         try {
 
-
             // putting the information in postgres table and link to graph
             // one post many categories in that case we uw
             let { mimetype } = postImage;
 
             let postIn = await postModel.makePost({ id, categorySelected, postTitle, postContent, mimetype });
 
-            return postIn;
+            // and then create a link in the graph db
 
+            if (!postIn.success) return postIn;
+
+
+            let linkingPost = await postModelG.linkPostWithCategory({ postId: postIn.data, category: categorySelected });
+
+            return linkingPost; 
 
         } catch (err) {
             err.from = 'PostService.createPost';

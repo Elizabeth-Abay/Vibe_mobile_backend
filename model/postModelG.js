@@ -27,7 +27,7 @@ class PostModelG {
 
             // before extracting check
             if (result.records.length === 0) {
-                return res.json({ success: true, data: [] });
+                return { success: true, data: [] };
             }
 
 
@@ -40,6 +40,33 @@ class PostModelG {
 
         } catch (err) {
             err.from = 'PostModelG.selectPostsBasedOnCategory';
+            next(err);
+        }
+    }
+
+
+    async linkPostWithCategory({ postId, category }) {
+        try {
+            let query = `
+                MERGE (p:Post { id: $postId })
+                WITH p
+                MATCH (i:Interest { name: $category })
+                MERGE (p)-[:BELONGS_TO]->(i)
+                RETURN p, i
+            `;
+
+            let result = await sessionToRead.run(
+                tx => {
+                    return tx.run(
+                        query, { postId, category }
+                    )
+                }
+            );
+
+            return (result.records.length === 0) ? { success: false } : { success: true }
+
+        } catch (err) {
+            err.from = 'PostModelG.linkPostWithCategory';
             next(err);
         }
     }
