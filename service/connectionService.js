@@ -79,24 +79,6 @@ class connectionService {
     }
 
 
-    async cancellingConnection(sentInfo) {
-        try {
-            // sentInfo = { userId , canceled }
-            let res = await connectionGraph.cancelConnection(sentInfo);
-
-            return (res.success) ? { success: true } : { success: false, reason: "data base problem from cancellingConnection" }
-
-        } catch (err) {
-            // the lower layers will throw error and the upper layer will be the one to catch that
-            if (typeof err === 'object' && !err.from) {
-                // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
-            }
-            throw err;
-        }
-
-    }
-
 
     async disConnection(sentInfo) {
         try {
@@ -190,70 +172,6 @@ class connectionService {
             };
 
         } catch (err) {
-            // the lower layers will throw error and the upper layer will be the one to catch that
-            if (typeof err === 'object' && !err.from) {
-                // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
-            }
-            throw err;
-        }
-    }
-
-
-    async getPendingRequests(id) {
-        try {
-            let res = await requestHandlerService.pendingRequests(id);
-
-            if (!res.success) return { succcess: false, reason: "Pending request fetching problem" }
-
-
-            if (res.data.length === 0) return {
-                success: true, profiles: []
-            }
-
-
-            // then get their profile information from the array sent
-            let profiles = await profileGetterServiceObj.getProfileService({ userIds: res.data })
-
-            return (profiles.success) ? { success: true, profiles: profiles.data } : { succcess: false, reason: "Profile fetching problem" }
-            // we need profile pictures and id
-        } catch (err) {
-            // the lower layers will throw error and the upper layer will be the one to catch that
-            if (typeof err === 'object' && !err.from) {
-                // this is so that if lower layer's message won't be masked
-                err.from = 'AuthService.createUser';
-            }
-            throw err;
-        }
-    }
-
-    async getSentRequests(id) {
-        try {
-            let res = await requestHandlerService.sentOutRequests(id);
-            // get their profile from the method
-            // this will give us the array of user ids
-
-            if (!res.success) return {
-                success: false,
-                reason: "data base problem from getSentRequests"
-            }
-
-
-
-            let profiles = await profileGetterServiceObj.getProfileService({ userIds: res.data })
-            // the profiles.data = array of { path , username , id  }
-
-            if (profiles.success) {
-                return {
-                    success: true,
-                    profiles: profiles.data
-                }
-
-            }
-
-            return { succcess: false, reason: "Couldnt fetch the profiles" }
-        }
-        catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
