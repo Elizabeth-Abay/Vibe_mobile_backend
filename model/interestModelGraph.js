@@ -1,20 +1,14 @@
 const driver = require('../config/neo4jConfig');
 
 
-const session = driver.session();
-
-const sessionToWrite = driver.session({
-    defaultAccessMode: session.WRITE
-})
-
-const sessionToRead = driver.session({
-    defaultAccessMode: session.READ
-})
-
-
-
 class InterestModelG {
     async linkingUserWithInterests(sentInfo) {
+        const session = driver.session();
+
+        const sessionToWrite = driver.session({
+            defaultAccessMode: session.WRITE
+        });
+
         try {
             // query - interests = [ { name , rated_as }]
             // then u will have it unwind - ie separate the object 
@@ -22,7 +16,7 @@ class InterestModelG {
             const query = `
                 MATCH (n:Person {id: $id})
                 UNWIND $interests AS interest
-                MATCH (i:Interest {name: interest.name})
+                MATCH (i:Interest{slug: interest.name})
                 MERGE (n)-[r:INTERESTED_IN ]->(i)
                 SET r.rated_as = interest.rated_as
                 RETURN n, collect(r) AS relationships
@@ -55,6 +49,12 @@ class InterestModelG {
     }
 
     async deletingLinks(sentInfo) {
+        const session = driver.session();
+
+        const sessionToWrite = driver.session({
+            defaultAccessMode: session.WRITE
+        })
+
         try {
 
             let queryToDel = `
@@ -120,6 +120,12 @@ class InterestModelG {
     }
 
     async gettingAllInterest(id) {
+        const session = driver.session();
+
+        const sessionToRead = driver.session({
+            defaultAccessMode: session.READ
+        })
+
         try {
             // we want to get all names of nodes which are linked by interested_in
             let query = `
@@ -153,8 +159,9 @@ class InterestModelG {
                 reason: "Error while GraphActivities.gettingAllInterest"
             }
 
-
-
         }
     }
 }
+
+
+module.exports = InterestModelG;

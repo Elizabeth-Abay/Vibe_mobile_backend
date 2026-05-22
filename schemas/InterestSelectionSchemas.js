@@ -16,4 +16,5 @@ class InterestSchema {
 
 }
 
+
 module.exports = InterestSchema;

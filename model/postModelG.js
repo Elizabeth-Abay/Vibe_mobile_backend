@@ -1,20 +1,17 @@
 const driver = require('../config/neo4jConfig');
 
-const session = driver.session();
-
-const sessionToWrite = driver.session({
-    defaultAccessMode: session.WRITE
-})
-
-const sessionToRead = driver.session({
-    defaultAccessMode: session.READ
-})
 
 class PostModelG {
     async selectPostsBasedOnCategory(categorySelected) {
+        const session = driver.session();
+
+        const sessionToRead = driver.session({
+            defaultAccessMode: session.READ
+        });
+
         try {
             const query = `
-                MATCH (p:Post)-[:BELONGS_TO]->(c:Category {category: $categorySelected})
+                MATCH (p:Post)-[:BELONGS_TO]->(c:Interest{slug: $categorySelected})
                 RETURN collect(p.id) AS postIds`;
 
             let result = await sessionToRead.run(
@@ -46,11 +43,17 @@ class PostModelG {
 
 
     async linkPostWithCategory({ postId, category }) {
+        const session = driver.session();
+
+        const sessionToRead = driver.session({
+            defaultAccessMode: session.READ
+        });
+
         try {
             let query = `
                 MERGE (p:Post { id: $postId })
                 WITH p
-                MATCH (i:Interest { name: $category })
+                MATCH (i:Interest {slug: $category })
                 MERGE (p)-[:BELONGS_TO]->(i)
                 RETURN p, i
             `;

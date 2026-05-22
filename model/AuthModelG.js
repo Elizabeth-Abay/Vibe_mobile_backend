@@ -1,16 +1,15 @@
 const driver = require('../config/neo4jConfig');
 
 
-const session = driver.session();
-
-const sessionToWrite = driver.session({
-    defaultAccessMode: session.WRITE
-})
-
-
-
 class AuthModelGraph {
     async createGraphNode(id) {
+
+        const session = driver.session();
+
+        const sessionToWrite = driver.session({
+            defaultAccessMode: session.WRITE
+        })
+
         try {
             // create a node
             let res = await sessionToWrite.executeWrite(

@@ -1,19 +1,15 @@
 const driver = require('../config/neo4jConfig');
 
 
-const session = driver.session();
-
-const sessionToWrite = driver.session({
-    defaultAccessMode: session.WRITE
-})
-
-const sessionToRead = driver.session({
-    defaultAccessMode: session.READ
-})
-
-
 class RequestHandler {
     async cancelConnectionRequest(sentInfo) {
+
+        const session = driver.session();
+
+        const sessionToWrite = driver.session({
+            defaultAccessMode: session.WRITE
+        })
+
         try {
             // sentInfo = { id , canceled }
             let query = `
@@ -50,6 +46,13 @@ class RequestHandler {
 
 
     async pendingRequests(id) {
+        const session = driver.session();
+
+
+        const sessionToRead = driver.session({
+            defaultAccessMode: session.READ
+        })
+
         try {
             // requests sent to the user
 
@@ -92,6 +95,13 @@ class RequestHandler {
     }
 
     async sentOutRequests(id) {
+
+        const session = driver.session();
+
+        const sessionToRead = driver.session({
+            defaultAccessMode: session.READ
+        })
+
         try {
             // then seek out ppl the user requested to connect to
 
@@ -130,8 +140,6 @@ class RequestHandler {
             throw err;
         }
     }
-
-
 
 }
 

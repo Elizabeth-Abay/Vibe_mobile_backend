@@ -7,10 +7,10 @@ class InterestService {
     async linkingInterest({ id, interestedIn }) {
         try {
             // linking
-            // sentInfo = { userId , interestedIn : { name : value }}
+            // sentInfo = { id , interestedIn : { name : value }}
             // convert that to interests : [ { name : something , value : Number(value)}]
 
-            let Interest = [];
+            let interests = [];
 
             for (let interest in interestedIn) {
                 // interest is the key;
@@ -22,10 +22,10 @@ class InterestService {
                     value: Number(val)
                 }
 
-                Interest.push(Obj)
+                interests.push(Obj)
             }
 
-            let result = await interestModelG.linkingUserWithInterests({ id, Interest });
+            let result = await interestModelG.linkingUserWithInterests({ id, interests });
 
             return (result.success) ? { success: true } : {
                 success: false,

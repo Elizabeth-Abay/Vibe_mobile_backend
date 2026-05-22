@@ -1,5 +1,13 @@
+const driver = require('../config/neo4jConfig');
+
 class ConnectionModel {
     async connectReq(sentInfo) {
+        const session = driver.session();
+
+        const sessionToWrite = driver.session({
+            defaultAccessMode: session.WRITE
+        })
+
         try {
             // sentInfo = { id , connectToId}
             let query = `
@@ -8,7 +16,9 @@ class ConnectionModel {
                 MERGE (requester)-[r:request_Connect]->(requested)
                 ON CREATE SET r.created_At = ${Date.now()}
                 RETURN requester , r , requested
-            `
+            `;
+
+
 
             let res = await sessionToWrite.executeWrite(
                 tx => {
@@ -30,6 +40,11 @@ class ConnectionModel {
     }
 
     async rejectAReq(sentInfo) {
+        const session = driver.session();
+
+        const sessionToWrite = driver.session({
+            defaultAccessMode: session.WRITE
+        })
         try {
             // sentInfo = { id , rejectedId }
             let query = `
@@ -66,6 +81,11 @@ class ConnectionModel {
     }
 
     async acceptingRequest(sentInfo) {
+        const session = driver.session();
+
+        const sessionToWrite = driver.session({
+            defaultAccessMode: session.WRITE
+        })
         try {
             // sentInfo = {acceptorId , acceptedId }
             let query = `
@@ -112,6 +132,11 @@ class ConnectionModel {
 
     async disConnecting(sentInfo) {
         try {
+            const session = driver.session();
+
+            const sessionToWrite = driver.session({
+                defaultAccessMode: session.WRITE
+            })
             // sentInfo = {id , disconnectedId}
             let query = `
                 MATCH (disconnector:Person) WHERE disconnector.id= $id
@@ -150,6 +175,12 @@ class ConnectionModel {
     }
 
     async allConnected(id) {
+        const session = driver.session();
+
+        const sessionToRead = driver.session({
+            defaultAccessMode: session.READ
+        })
+
         try {
             // seek out all ppl connected to the user
 
@@ -190,6 +221,12 @@ class ConnectionModel {
 
 
     async matchedUsers(id) {
+        const session = driver.session();
+
+        const sessionToRead = driver.session({
+            defaultAccessMode: session.READ
+        });
+
         try {
             // to match users we need to do a weighted search
             // first get users interest by number
@@ -221,7 +258,7 @@ class ConnectionModel {
 
             if (!res) return {
                 success: false,
-                reason : "Couldnt find the matched users"
+                reason: "Couldnt find the matched users"
             }
 
 

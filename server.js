@@ -1,0 +1,38 @@
+const express = require('express');
+const dotenv = require('dotenv');
+const authRouter = require('./routes/authRouter');
+const connectionRouter = require('./routes/connectionRouter');
+const interestRouter = require('./routes/interestRouter');
+const notificationRouter = require('./routes/notificationRouter');
+const postRouter = require('./routes/postRouter');
+const profileRouter = require('./routes/profileRouter');
+const requestRouter = require('./routes/requestRouter');
+const tokenRouter = require('./routes/tokenRouter');
+const errorHandler = require('./middleware/globalErrorHandler');
+
+
+dotenv.config();
+
+const { PORT } = process.env;
+
+
+const server = express();
+
+server.use(express.json());
+
+server.use('/uploads', express.static('uploads'));
+
+
+server.use('/auth', authRouter);
+server.use('/connection', connectionRouter);
+server.use('/interest', interestRouter);
+server.use('/notification', notificationRouter);
+server.use('/post', postRouter);
+server.use('/profile', profileRouter);
+server.use('/request', requestRouter);
+server.use('/token', tokenRouter);
+
+
+server.use(errorHandler);
+
+server.listen(PORT, () => console.log("server up and running on http://localhost:3000"));

@@ -1,4 +1,4 @@
-const { AuthModelPg } = require('../model/AuthModel');
+const AuthModelPg  = require('../model/AuthModel');
 const ProfileModel = require('../model/profileModel');
 const BcryptRelated = require('../utils/bcryptRelated');
 

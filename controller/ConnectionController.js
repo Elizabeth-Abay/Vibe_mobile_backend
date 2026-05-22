@@ -1,11 +1,10 @@
 // when creating connection two things - userId from decodedAccess and the other user's id from req.body
 
-const { connectionService } = require('../service/connectionService.js');
+const ConnectionService = require('../service/connectionService.js');
 const { getMatchedConnectionsService } = require('../service/connectionService.js');
 
 
-let connServiceObj = new connectionService();
-let getConnectionsServiceObj = new getMatchedConnectionsService();
+let connectionService = new ConnectionService();
 
 
 class ConnectionController {
@@ -15,7 +14,7 @@ class ConnectionController {
 
             let { connectToId } = req.body;
 
-            let result = await connServiceObj.requestingConnection({ id, connectToId });
+            let result = await connectionService.requestingConnection({ id, connectToId });
 
             return (result.success) ? res.status(200).json({ success: true }) : res.status(400).json(result);
 
@@ -31,7 +30,7 @@ class ConnectionController {
             let { id } = req.decodedAccess;
             let { acceptedId } = req.body;
 
-            let result = await connServiceObj.acceptingConnection({ acceptorId: id, acceptedId });
+            let result = await connectionService.acceptingConnection({ acceptorId: id, acceptedId });
 
             return (result.success) ? res.status(200).json({ success: true }) : res.status(400).json(result);
         
@@ -47,7 +46,7 @@ class ConnectionController {
             let { id } = req.decodedAccess;
             let { rejectedId } = req.body;
 
-            let result = await connServiceObj.rejectingConnection({ id, rejectedId });
+            let result = await connectionService.rejectingConnection({ id, rejectedId });
 
             return (result.success) ? res.status(200).json({ success: true }) : res.status(400).json(result);
 
@@ -61,7 +60,7 @@ class ConnectionController {
         try {
             let { id } = req.decodedAccess;
             let { disconnectedId } = req.body;
-            let result = await connServiceObj.disConnection({ id, disconnectedId });
+            let result = await connectionService.disConnection({ id, disconnectedId });
 
             return (result.success) ? res.status(200).json({ success: true }) : res.status(400).json(result);
 

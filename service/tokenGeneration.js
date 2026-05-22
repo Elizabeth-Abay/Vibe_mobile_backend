@@ -115,7 +115,7 @@ class RefreshToken {
         }
     }
 
-    invalidateAllRefresh(userId) {
+    async invalidateAllRefresh(userId) {
         try {
             // revoke all tokens if expired token used
             let res = await refreshModel.invalidateAll(userId);

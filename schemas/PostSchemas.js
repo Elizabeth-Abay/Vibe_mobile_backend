@@ -6,6 +6,8 @@ class PostSchemas {
     static getPostCategory = Joi.object({
         categorySelected: Joi.string()
             .valid(...allowedCategories)
+            .trim()
+            .lowercase()
             .required()
     });
 
@@ -14,6 +16,8 @@ class PostSchemas {
 
         categorySelected: Joi.string()
             .valid(...allowedCategories)
+            .trim()
+            .lowercase()
             .required(),
 
         postTitle: Joi.string(),
