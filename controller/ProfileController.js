@@ -51,12 +51,11 @@ class ProfileController {
             }
 
             // Extract buffer data and mimetype from Multer
-            const imageData = req.file.buffer;
-            const imageMime = req.file.mimetype;
+            const imageUrl = req.file.path;
             const userId = req.decodedAccess;
 
 
-            let result = await profileService.updateProfilePic({ id: userId, profilePicData: imageData, profilePicMime: imageMime });
+            let result = await profileService.updateProfilePic({ id: userId,  profilePicUrl: imageUrl });
 
             return (result.success) ?
                 res.status(201).json({ message: 'Successful' }) :

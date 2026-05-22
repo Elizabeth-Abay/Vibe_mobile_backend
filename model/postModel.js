@@ -6,7 +6,7 @@ class PostModel {
                     p.id AS post_id,
                     p.title,
                     p.content,
-                    p.image AS post_image,
+                    p.image_url AS post_image,
                     p.category_slug,
                     u.user_id AS author_id,
                     u.username,
@@ -32,15 +32,15 @@ class PostModel {
         }
     }
 
-    async makePost({  id, categorySelected, postTitle, postContent , mimetype }) {
+    async makePost({  id, categorySelected, postTitle, postContent , postImage }) {
         try {
             let query = `
-                    INSERT INTO posts (user_id, title, content, image , category)
+                    INSERT INTO posts (user_id, title, content, image_url , category)
                     VALUES ($1, $2, $3, $4, $5)
                     RETURNING id;
                 `;
 
-            let values = [id, postTitle, postContent, mimetype, categorySelected];
+            let values = [id, postTitle, postContent, postImage, categorySelected];
 
             let result = await pg.query(query , values);
 

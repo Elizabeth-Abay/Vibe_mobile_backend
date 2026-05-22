@@ -1,5 +1,3 @@
-const { use } = require("../config/emailTransporter");
-
 class RefreshToken {
     async createRef({ userId, hashedRandomString }) {
         try {

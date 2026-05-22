@@ -48,19 +48,18 @@ class ProfileFristTimeModel {
 
 
 
-    async settingProfilePic({ id, profilePicData, profilePicMime }) {
+    async settingProfilePic({ id, profilePicUrl }) {
         try {
             // wld do an update request to your bio
             // using the desktop as storage currently so better use update command
             let query = `
                 UPDATE profile_info 
-                SET profile_picture_data = $2,
-                profile_picture_mime = $3
+                SET profile_url = $2
                 WHERE user_id = $1
                 RETURNING *
             `;
 
-            let values = [id, profilePicData, profilePicMime];
+            let values = [id, profilePicUrl];
 
             let result = await pg.query(query, values);
 

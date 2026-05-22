@@ -98,7 +98,7 @@ class AuthModelPg {
 
     async setUserAsVerified(userId) {
         try {
-            let query = `UPDATE users SET status = verified WHERE id = $1 RETURNING id`;
+            let query = `UPDATE users SET status = 'verified' WHERE id = $1 RETURNING id`;
             let values = [userId];
 
             let result = await pg.query(query, values);

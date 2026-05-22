@@ -35,9 +35,8 @@ class PostService {
 
             // putting the information in postgres table and link to graph
             // one post many categories in that case we uw
-            let { mimetype } = postImage;
 
-            let postIn = await postModel.makePost({ id, categorySelected, postTitle, postContent, mimetype });
+            let postIn = await postModel.makePost({ id, categorySelected, postTitle, postContent, postImage });
 
             // and then create a link in the graph db
 

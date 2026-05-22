@@ -63,15 +63,15 @@ class ProfileService {
     async updateNameAndBio({ id, name, bio }) {
         try {
             // first check which one is to be
-            let whichUpdated ;
+            let whichUpdated;
 
-            if ( name && !bio) whichUpdated = 'name';
+            if (name && !bio) whichUpdated = 'name';
 
-            else if( !name && bio) whichUpdated = 'bio';
+            else if (!name && bio) whichUpdated = 'bio';
 
             else whichUpdated = 'both';
 
-            let result = await profileModel.settingNameAndBio({ id, name, bio , whichUpdated });
+            let result = await profileModel.settingNameAndBio({ id, name, bio, whichUpdated });
 
             return result;
 
@@ -86,11 +86,11 @@ class ProfileService {
     }
 
 
-    async updateProfilePic({ id, profilePicData, profilePicMime }) {
+    async updateProfilePic({ id, profilePicUrl }) {
         try {
-            if (!id || !profilePicData || !profilePicMime) return { success: false, reason: "Insufficient data provided" };
+            if (!id || !profilePicUrl) return { success: false, reason: "Insufficient data provided" };
 
-            let result = await profileModel.settingProfilePic({ id, profilePicData, profilePicMime });
+            let result = await profileModel.settingProfilePic({ id, profilePicUrl });
 
             return result;
 

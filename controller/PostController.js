@@ -26,14 +26,13 @@ class PostController {
 
 
             // have req.files .. part
-            // info in the postImage
-            // fieldname , originalname ,encoding ,mimetype ,size ,destination ,filename ,path 
+            let postImage = req.file ? req.file.path : null;
+
 
             let {
                 categorySelected,
                 postTitle,
-                postContent,
-                postImage
+                postContent
             } = req.body;
 
             let result = await postService.createPost({
