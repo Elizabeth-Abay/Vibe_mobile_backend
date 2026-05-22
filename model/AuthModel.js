@@ -74,6 +74,8 @@ class AuthModelPg {
                 query, values
             )
 
+            console.log(result.rows);
+
 
             if (result.rows.length === 1) {
                 return {

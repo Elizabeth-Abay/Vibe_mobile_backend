@@ -21,7 +21,12 @@ class AuthController {
             return res.status(201).json({ id: data });
 
         } catch (err) {
-            err.from = "AuthControllers.createUser";
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = "AuthControllers.createUser";
+            }
+            
             next(err); // this will call the error handler
         }
     }
@@ -41,7 +46,11 @@ class AuthController {
             // result.data - contain { accessToken,refreshToken }
 
         } catch (err) {
-            err.from = 'AuthControllers.verifyUser';
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthControllers.verifyUser';
+            }
             next(err);
         }
     }
@@ -67,7 +76,11 @@ class AuthController {
 
 
         } catch (err) {
-            err.from = 'AuthControllers.logIn';
+           // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                 err.from = 'AuthControllers.logIn';
+            }
             next(err);
         }
     }
@@ -81,7 +94,10 @@ class AuthController {
 
 
         } catch (err) {
-            err.from = 'AuthControllers.logOut';
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                 err.from = 'AuthControllers.logOut';
+            }
             next(err);
         }
     }

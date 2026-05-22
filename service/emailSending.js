@@ -7,9 +7,10 @@ class EmailSendingFunctions {
 
     static async sendingOTPEmail({ email, OTP }) {
         try {
-            let tempalatePath = path.join(__dirname, '../views/otpTemplate.ejs');
+            let templatePath = path.join(__dirname, '../views/otpTemplate.ejs');
+            // console.log("tempalatePath" , tempalatePath);
 
-            const html = await renderEjs({ tempalatePath, placeHolders: { otp: OTP } });
+            const html = await renderEjs({ templatePath, placeHolders: { otp: OTP } });
 
             let result = await emailTransporter.sendMail({
                 from: `VIBE NOTIFICATIONS`,

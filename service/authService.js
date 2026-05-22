@@ -35,8 +35,10 @@ class AuthService {
 
             // creating the user node and the user in pg
             let userInPg = await authModelPg.createUser({ email, otpHashed });
+            // console.log("userinPg" , userInPg);
 
-            let { id } = userInPg;
+
+            let { id } = userInPg.data;
 
             let userInGraph = await authModelGraph.createGraphNode(id);
 
@@ -62,8 +64,15 @@ class AuthService {
             // hash otp
             let OtpHashed = shaHasher(OTP);
 
+
             // get the otp from db
-            let { data } = await authModelPg.getOtp(id);
+            let result = await authModelPg.getOtp(id);
+
+            if (!result.success) return result;
+
+            let { data } = result;
+
+            console.log("db ", data, "hashed ", OtpHashed);
 
             let otpMatched = doesOtpMatch(data, OtpHashed);
 
@@ -135,7 +144,7 @@ class AuthService {
 
             if (!passwordsMatched) return {
                 success: false,
-                reason : "Password mismatch"
+                reason: "Password mismatch"
             }
 
             const accessToken = accessService.generateAccess(id);

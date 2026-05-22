@@ -8,14 +8,17 @@ const path = require('path');
 
 
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 // we need to store our password and this things in a secret place
 
+
+const { data_base_host, data_base_user, data_base_password, data_base_used } = process.env;
+
 let pool = new pg.Pool({
-    host: process.env.data_base_host,
-    user: process.env.data_base_user,
-    password: process.env.data_base_password,
-    database: process.env.data_base_used,
+    host: data_base_host,
+    user: data_base_user,
+    password: data_base_password,
+    database: data_base_used,
     connectionLimit: 20
 })
 
