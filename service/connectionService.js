@@ -8,6 +8,14 @@ let connectionGraph = new graphUponConnectingAndDisconnecting();
 let requestHandlerService = new getRequestHandler();
 let profileGetterServiceObj = new profileService();
 
+
+
+
+const NotificationModel = require('../model/notificationModel.js');
+
+
+const notificationModel = new NotificationModel();
+
 class connectionService {
     async requestingConnection(sentInfo) {
         try {
@@ -17,26 +25,37 @@ class connectionService {
             return (res.success) ? { success: true } : { success: false, reason: "data base problem from requestingConnection" }
 
         } catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
 
     }
 
 
-    async acceptingConnection(sentInfo) {
+    async acceptingConnection({ acceptorId, acceptedId }) {
         try {
-            // sentInfo = {acceptorId , acceptedId }
-            let res = await connectionGraph.acceptingRequest(sentInfo);
+            // when u accept create a row in notification table
+            let result = await connectionGraph.acceptingRequest({ acceptorId, acceptedId });
 
-            return (res.success) ? { success: true } : {
-                success: false,
-                reason: "data base problem from acceptingConnection"
-            }
+            // then create a row in the notifications table for the user to see
+            if (!result.succcess) return result;
+
+            let notifying = await notificationModel.createNotifications({ noitifier_id: acceptorId, notify_to_id: acceptedId, type: 'Connection Request Accepted' });
+
+            return notifying;
+
 
         } catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
 
     }
@@ -50,8 +69,12 @@ class connectionService {
             return (res.success) ? { success: true } : { success: false, reason: "data base problem from rejectingConnection" }
 
         } catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
     }
 
@@ -64,8 +87,12 @@ class connectionService {
             return (res.success) ? { success: true } : { success: false, reason: "data base problem from cancellingConnection" }
 
         } catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
 
     }
@@ -79,8 +106,12 @@ class connectionService {
             return (res.success) ? { success: true } : { success: false, reason: "data base problem from disConnection" }
 
         } catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
 
     }
@@ -159,8 +190,12 @@ class connectionService {
             };
 
         } catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
     }
 
@@ -183,8 +218,12 @@ class connectionService {
             return (profiles.success) ? { success: true, profiles: profiles.data } : { succcess: false, reason: "Profile fetching problem" }
             // we need profile pictures and id
         } catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
     }
 
@@ -215,8 +254,12 @@ class connectionService {
             return { succcess: false, reason: "Couldnt fetch the profiles" }
         }
         catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
     }
 
@@ -242,8 +285,12 @@ class connectionService {
             }
 
         } catch (err) {
-            err.from = 'ConnectionController.requestConnectionController';
-            next(err);
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthService.createUser';
+            }
+            throw err;
         }
     }
 }
