@@ -93,8 +93,8 @@ class ConnectionService {
     async getMatchedConnections(id) {
         try {
 
-            let res = await requestHandlerService.matchedUsers(id);
-            console.log("result from requestHandlerService.matchedUsers ", res)
+            let res = await connectionModel.matchedUsers(id);
+            // console.log("result from connectionModel.matchedUsers ", res)
 
 
             if (!res.success || (res.data.length === 0)) return res;
@@ -121,7 +121,7 @@ class ConnectionService {
 
     async getAllConnections(id) {
         try {
-            let res = await requestHandlerService.allConnected(id);
+            let res = await connectionModel.allConnected(id);
 
             if (!res.success) return {
                 success: false,
@@ -129,15 +129,11 @@ class ConnectionService {
             }
 
 
-            let profiles = await profileGetterServiceObj.getProfileService({ userIds: res.data });
+            let profiles = await UserProfileGetter.getProfileInfo(res.data);
 
-            return (profiles.success) ? {
-                success: true,
-                profiles: profiles.data
-            } : {
-                success: false,
-                reason: "problems on profileGetterServiceObj.getProfileService from getAllConnections"
-            }
+            if (!profiles.success) return profiles;
+
+            return profiles;
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

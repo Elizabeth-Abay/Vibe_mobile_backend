@@ -53,6 +53,7 @@ class RequestHandler {
             defaultAccessMode: session.READ
         })
 
+        console.log("id is " , id);
         try {
             // requests sent to the user
 
@@ -79,12 +80,12 @@ class RequestHandler {
 
             // convert the value to an array
             let ids = res.records.map(
-                r => r.get('x.userId')
+                r => r.get('x.id')
             );
 
             return {
                 success: true,
-                data: userIds
+                data: ids
             }
 
         } catch (err) {
@@ -112,7 +113,11 @@ class RequestHandler {
                 `;
 
             let res = await sessionToRead.executeRead(
-                query, { id }
+                tx => {
+                    return tx.run(
+                        query , { id }
+                    )
+                }
             )
 
             if (res.records.length === 0) return {

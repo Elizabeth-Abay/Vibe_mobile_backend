@@ -47,11 +47,12 @@ class ConnectionModel {
         })
         try {
             // sentInfo = { id , rejectedId }
+            console.log(sentInfo);
             let query = `
                 MATCH (requestor:Person)  WHERE requestor.id = $rejectedId
                 MATCH (rejector:Person)  WHERE rejector.id = $id
                 MATCH (requestor)-[r:request_Connect]->(rejector)
-                DETACH DELETE r
+                DELETE r
                 RETURN rejector
             `
 
@@ -63,9 +64,10 @@ class ConnectionModel {
                 }
             )
 
-            let res = result.records[0]?.length;
 
-            return (res === 0) ? {
+            console.log("REsutl " , result.records)
+
+            return (!result.records[0] || result.records[0].length === 0) ? {
                 success: false,
                 reason: "Error in the database"
             }
@@ -92,7 +94,7 @@ class ConnectionModel {
                 MATCH (accpetor:Person) WHERE accpetor.id = $acceptorId
                 MATCH (accepted:Person) WHERE accepted.id = $acceptedId
                 MATCH (accepted)-[r:request_Connect]->(accpetor)
-                MERGE (accepted)-[c:Connected]->(accpetor)
+                MERGE (accepted)-[c:Connected]-(accpetor)
                 ON CREATE SET c.since = ${Date.now()}
                 DETACH DELETE r
                 RETURN accepted , accpetor
@@ -184,6 +186,7 @@ class ConnectionModel {
         try {
             // seek out all ppl connected to the user
 
+
             let query = `
                 MATCH (n:Person) WHERE n.id = $id 
                 MATCH (n)-[r:Connected]-(x:Person)
@@ -192,7 +195,9 @@ class ConnectionModel {
 
             let res = await sessionToRead.executeRead(
                 query, { id }
-            )
+            );
+
+
 
             if (res.records.length === 0) return {
                 // this means u havent connected to a user
@@ -228,22 +233,28 @@ class ConnectionModel {
         });
 
         try {
+            console.log("id " , id);
+
             // to match users we need to do a weighted search
             // first get users interest by number
             // and then half it up and find all users that havev >= 1/2 of that
             // return the users with most shared interests
             let queryToMatch = `
-                MATCH 
-                    (u1:Person {id : $id })-[r1:INTERESTED_IN]->(i:Interest)<-[r2:INTERESTED_IN]-(u2:Person)
+                MATCH (u1:Person { id: $id })-[r1:INTERESTED_IN]->(i:Interest)<-[r2:INTERESTED_IN]-(u2:Person)
                 WHERE u1 <> u2
-                    AND NOT (u1)-[:request_Connect]-(u2)
+                AND NOT (u1)-[:request_Connect]-(u2)
                 WITH u2, 
-                    SUM( r1.rated_as * r2.rated_as ) AS matchScore,
+                    SUM(r1.rated_as * r2.rated_as) AS matchScore,
                     collect(i.name) AS sharedInterests
-                RETURN u2.id AS matchedUserId , sharedInterests
                 ORDER BY matchScore DESC
                 LIMIT 50
+                RETURN u2.id AS matchedUserId, 
+                    sharedInterests, 
+                    matchScore
             `
+
+
+            
             // the first line will get all share interest bn users
             // SUM (r1.rated_as * r2.rated_as) - will be the total score
             // we use with to return many things at once 
@@ -260,6 +271,8 @@ class ConnectionModel {
                 success: false,
                 reason: "Couldnt find the matched users"
             }
+
+            console.log("res.records ", res.records);
 
 
             if (res.records.length === 0) return {

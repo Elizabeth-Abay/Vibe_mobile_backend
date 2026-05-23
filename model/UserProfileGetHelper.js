@@ -5,13 +5,13 @@ class UserProfileGetter {
     // given array of ids get their picture , username and name
     static async getProfileInfo(userIdArr) {
         try {
+
             let query = `
                     SELECT 
                         name , 
                         user_name , 
                         user_id , 
-                        profile_picture_data , 
-                        profile_picture_mime
+                        profile_url
                     FROM profile_info
                     WHERE user_id = ANY($1)
                 `
@@ -20,6 +20,8 @@ class UserProfileGetter {
 
 
             let result = await pool.query(query, values);
+
+            console.log("result  from gettingProfile" , result);
 
             return (result.rowCount === 0) ?
                 {
