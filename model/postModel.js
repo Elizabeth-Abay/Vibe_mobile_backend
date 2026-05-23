@@ -10,11 +10,11 @@ class PostModel {
                     p.title,
                     p.content,
                     p.image_url AS post_image,
-                    p.category_slug,
+                    p.category,
                     u.user_id AS author_id,
-                    u.username,
+                    u.user_name,
                     u.name,
-                    u.profile_picture AS author_profile_picture
+                    u.profile_url AS author_profile_picture
                 FROM posts p
                 INNER JOIN profile_info u ON p.user_id = u.user_id
                 WHERE p.id = ANY($1);

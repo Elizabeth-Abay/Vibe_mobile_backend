@@ -14,7 +14,7 @@ class PostModelG {
                 MATCH (p:Post)-[:BELONGS_TO]->(c:Interest{slug: $categorySelected})
                 RETURN collect(p.id) AS postIds`;
 
-            let result = await sessionToRead.run(
+            let result = await sessionToRead.executeRead(
                 tx => {
                     return tx.run(
                         query, { categorySelected }
@@ -45,12 +45,16 @@ class PostModelG {
     async linkPostWithCategory({ postId, category }) {
         const session = driver.session();
 
-        const sessionToRead = driver.session({
-            defaultAccessMode: session.READ
+        const sessionToWrite = driver.session({
+            defaultAccessMode: session.WRITE
         });
 
+
         try {
-            let query = `
+
+            //  the postId is a singular id here and the slug is one too
+            // meaning the post will have a single category
+            const query = `
                 MERGE (p:Post { id: $postId })
                 WITH p
                 MATCH (i:Interest {slug: $category })
@@ -58,19 +62,20 @@ class PostModelG {
                 RETURN p, i
             `;
 
-            // let result = await sessionToRead.run(
-            //     tx => {
-            //         return tx.run(
-            //             query, { postId, category }
-            //         )
-            //     }
 
-            // );
+            console.log('query ', query);
+
+            console.log({ postId, category });
+
+            let result = await sessionToWrite.executeWrite(
+                tx => {
+                    return tx.run(
+                        query, { postId, category }
+                    )
+                }
+            );
 
 
-            let result = await session.executeWrite(async (tx) => {
-                return await tx.run(query, { postId, category });
-            });
 
             return (result.records.length === 0) ? { success: false } : { success: true }
 

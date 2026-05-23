@@ -9,7 +9,7 @@ class InterestModelG {
             defaultAccessMode: session.WRITE
         });
 
-        console.log(sentInfo);
+        // console.log(sentInfo);
 
         try {
             // query - interests = [ { name , rated_as }]

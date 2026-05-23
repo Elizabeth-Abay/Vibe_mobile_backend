@@ -6,7 +6,7 @@ const postService = new PostService();
 class PostController {
     async getPostsInACategory(req, res, next) {
         try {
-            let { categorySelected } = req.body;
+            let { categorySelected } = req.category;
 
             let result = await postService.getPostsInACategory(categorySelected);
 
@@ -18,7 +18,6 @@ class PostController {
                 // this is so that if lower layer's message won't be masked
                 err.from = 'PostController.getPostsInACategory';
             }
-            throw err;
             next(err);
         }
 

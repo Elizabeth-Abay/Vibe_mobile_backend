@@ -41,12 +41,13 @@ class PostService {
 
             let postIn = await postModel.makePost({ id, categorySelected, postTitle, postContent, postImage });
 
+
             // and then create a link in the graph db
 
             if (!postIn.success) return postIn;
 
 
-            let linkingPost = await postModelG.linkPostWithCategory({ postId: postIn.data, category: categorySelected });
+            let linkingPost = await postModelG.linkPostWithCategory({ postId: postIn.data.id, category: categorySelected });
 
             return linkingPost;
 

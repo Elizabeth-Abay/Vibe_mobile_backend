@@ -24,13 +24,14 @@ server.use('/uploads', express.static('uploads'));
 
 
 server.use('/auth', authRouter); // -- worked
-server.use('/connection', connectionRouter);
 server.use('/interest', interestRouter); //-- worked
-server.use('/notification', notificationRouter);
-server.use('/post', postRouter); // 
+server.use('/post', postRouter); // -- worked
 server.use('/profile', profileRouter); // -- worked
+server.use('/connection', connectionRouter);
+server.use('/notification', notificationRouter);
 server.use('/request', requestRouter);
 server.use('/token', tokenRouter);
+
 
 
 server.use(errorHandler);
