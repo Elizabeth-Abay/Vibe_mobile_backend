@@ -21,7 +21,7 @@ connectionRouter.post('/disconnect-user', TokenDecoder.accessDecode, validate(Co
 
 // GET routes for retrieving connection data
 connectionRouter.get('/matched-users', TokenDecoder.accessDecode , connectionController.getMatchedConnections); // -- works
-connectionRouter.get('/all-connections', TokenDecoder.accessDecode , connectionController.getAllConnections);
+connectionRouter.get('/all-connections', TokenDecoder.accessDecode , connectionController.getAllConnections); // -- works
 
 
 

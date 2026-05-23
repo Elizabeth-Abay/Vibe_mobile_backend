@@ -28,7 +28,7 @@ server.use('/interest', interestRouter); //-- worked
 server.use('/post', postRouter); // -- worked
 server.use('/profile', profileRouter); // -- worked
 server.use('/request', requestRouter); // -- worked
-server.use('/connection', connectionRouter);
+server.use('/connection', connectionRouter); // -- worked
 server.use('/notification', notificationRouter);
 server.use('/token', tokenRouter);
 

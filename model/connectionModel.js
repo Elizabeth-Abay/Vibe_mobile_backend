@@ -65,7 +65,7 @@ class ConnectionModel {
             )
 
 
-            console.log("REsutl " , result.records)
+            console.log("REsutl ", result.records)
 
             return (!result.records[0] || result.records[0].length === 0) ? {
                 success: false,
@@ -194,7 +194,11 @@ class ConnectionModel {
                 `;
 
             let res = await sessionToRead.executeRead(
-                query, { id }
+                tx => {
+                    return tx.run(
+                        query, { id }
+                    )
+                }
             );
 
 
@@ -209,7 +213,7 @@ class ConnectionModel {
 
 
             let connectedUserIds = res.records.map(
-                r => r.get('x.userId')
+                r => r.get('x.id')
             )
 
             return {
@@ -233,7 +237,7 @@ class ConnectionModel {
         });
 
         try {
-            console.log("id " , id);
+            console.log("id ", id);
 
             // to match users we need to do a weighted search
             // first get users interest by number
@@ -254,7 +258,7 @@ class ConnectionModel {
             `
 
 
-            
+
             // the first line will get all share interest bn users
             // SUM (r1.rated_as * r2.rated_as) - will be the total score
             // we use with to return many things at once 
