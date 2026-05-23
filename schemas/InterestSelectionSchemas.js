@@ -2,15 +2,18 @@ const Joi = require('joi');
 
 class InterestSchema {
     static interestSchema = Joi.object({
-        // Enforce that interestedIn must be an object
-        interestedIn: Joi.object()
-            // Enforce structure on dynamic keys and values:
-            // This reads: Any key string must have a string value
-            .pattern(
-                Joi.string().min(1).max(50),  // Rules for the dynamic names/keys
-                Joi.number().required() // Rules for the dynamic values
+        interestedIn: Joi.array()
+            .items(
+                Joi.object().pattern(
+                    // The Key: Must be a lowercase slug string (e.g., "football")
+                    Joi.string().lowercase().trim().min(2).max(50).required(),
+
+                    // The Value: Must be an integer score (e.g., 10)
+                    Joi.number().integer().min(0).max(10).required()
+                )
+                    .length(1) // Ensures each object inside the array contains exactly one key-value pair
             )
-            .min(1) // Optional: Requires at least one interest pair to be sent
+            .min(1) // Requires the user to pick at least one interest block
             .required()
     });
 

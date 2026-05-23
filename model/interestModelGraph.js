@@ -9,6 +9,8 @@ class InterestModelG {
             defaultAccessMode: session.WRITE
         });
 
+        console.log(sentInfo);
+
         try {
             // query - interests = [ { name , rated_as }]
             // then u will have it unwind - ie separate the object 
@@ -34,17 +36,15 @@ class InterestModelG {
 
             )
 
+            console.log("Result from connecting interest and user " , result.records);
+
 
             return (result.records[0]?.length === 0) ? { success: false } : { success: true }
 
 
         } catch (err) {
-            console.log("Error while GraphActivities.linkingUserWithInterests ", err.message);
-
-            return {
-                success: false,
-                reason: "Error while GraphActivities.linkingUserWithInterests"
-            }
+            err.from = 'InterestModelG.linkingUserWithInterests';
+            throw err;
         }
     }
 
@@ -82,14 +82,8 @@ class InterestModelG {
 
 
         } catch (err) {
-            console.log("Error while GraphActivities.updatingLinksOfInterests ", err.message);
-            return {
-                success: false,
-                reason: "Error while GraphActivities.updatingLinksOfInterests"
-            }
-
-
-
+            err.from = 'InterestModelG.deletingLinks';
+            throw err;
         }
     }
 
@@ -108,14 +102,8 @@ class InterestModelG {
             return res;
 
         } catch (err) {
-            console.log("Error while GraphActivities.updatingLinksOfInterests ", err.message);
-            return {
-                success: false,
-                reason: "Error while GraphActivities.updatingLinksOfInterests"
-            }
-
-
-
+            err.from = 'InterestModelG.updaatingLinksOfInterests';
+            throw err;
         }
     }
 
@@ -129,7 +117,7 @@ class InterestModelG {
         try {
             // we want to get all names of nodes which are linked by interested_in
             let query = `
-            MATCH (u:Person) WHERE u.userId = $userId
+            MATCH (u:Person) WHERE u.id = $id
             MATCH (u)-[r:INTERESTED_IN]->(i)
             RETURN collect(i.name) , collect(r.rated_as)
             `
@@ -137,7 +125,7 @@ class InterestModelG {
             let res = await sessionToRead.executeRead(
                 tx => {
                     return tx.run(
-                        query, { userId }
+                        query, { id }
                     )
                 }
             )
@@ -153,12 +141,8 @@ class InterestModelG {
 
 
         } catch (err) {
-            console.log("Error while GraphActivities.gettingAllInterest ", err.message);
-            return {
-                success: false,
-                reason: "Error while GraphActivities.gettingAllInterest"
-            }
-
+            err.from = 'InterestModelG.gettingAllInterest';
+            throw err;
         }
     }
 }

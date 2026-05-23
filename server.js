@@ -23,11 +23,11 @@ server.use(express.json());
 server.use('/uploads', express.static('uploads'));
 
 
-server.use('/auth', authRouter);
+server.use('/auth', authRouter); // -- worked
 server.use('/connection', connectionRouter);
-server.use('/interest', interestRouter);
+server.use('/interest', interestRouter); //-- worked
 server.use('/notification', notificationRouter);
-server.use('/post', postRouter);
+server.use('/post', postRouter); // 
 server.use('/profile', profileRouter); // -- worked
 server.use('/request', requestRouter);
 server.use('/token', tokenRouter);

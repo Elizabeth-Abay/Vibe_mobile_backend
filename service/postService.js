@@ -24,8 +24,11 @@ class PostService {
             return resultSent;
 
         } catch (err) {
-            err.from = 'PostService.getPostsInACategory';
-            next(err);
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'PostService.getPostsInACategory';
+            }
+            throw err;
         }
     }
 
@@ -45,11 +48,14 @@ class PostService {
 
             let linkingPost = await postModelG.linkPostWithCategory({ postId: postIn.data, category: categorySelected });
 
-            return linkingPost; 
+            return linkingPost;
 
         } catch (err) {
-            err.from = 'PostService.createPost';
-            next(err);
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'PostService.createPost';
+            }
+            throw err;
         }
     }
 }

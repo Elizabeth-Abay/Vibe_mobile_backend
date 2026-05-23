@@ -12,15 +12,20 @@ class InterestService {
 
             let interests = [];
 
-            for (let interest in interestedIn) {
+
+            for (let interest of interestedIn) {
                 // interest is the key;
-                let key = interest;
-                let val = interestedIn[interest]
+                // console.log(interest) -- gives the index in for in
+
+                let key = Object.keys(interest)[0];
+                let val = Object.values(interest);;
 
                 let Obj = {
                     name: key,
-                    value: Number(val)
+                    rated_as: Number(val)
                 }
+
+                // console.log(Obj)
 
                 interests.push(Obj)
             }
@@ -50,22 +55,26 @@ class InterestService {
             // sentInfo = { userId , interestedIn : { name : value }}
             // convert that to interests : [ { name : something , value : Number(value)}]
 
-            let Interest = [];
+            let interests = [];
 
-            for (let interest in interestedIn) {
+            for (let interest of interestedIn) {
                 // interest is the key;
-                let key = interest;
-                let val = interestedIn[interest]
+                // console.log(interest) -- gives the index in for in
+
+                let key = Object.keys(interest)[0];
+                let val = Object.values(interest);;
 
                 let Obj = {
                     name: key,
-                    value: Number(val)
+                    rated_as: Number(val)
                 }
 
-                Interest.push(Obj)
+                // console.log(Obj)
+
+                interests.push(Obj)
             }
 
-            let result = await interestModelG.updatingLinksOfInterests({ id, Interest });
+            let result = await interestModelG.updatingLinksOfInterests({ id, interests });
 
             return (result.success) ? { success: true } : {
                 success: false,
@@ -89,11 +98,26 @@ class InterestService {
 
             let result = await interestModelG.gettingAllInterest(id);
 
-            return (result.success) ? { success: true, data: result.data } : {
-                success: false,
-                reason: "data base problem from linkingInterest"
+            // if successful this retuns 2 arrays
+            if (!result.success) return result;
+            
+            console.log("Resukt " , result)
 
-            }
+            const names = result.data[0];
+            const values = result.data[1];
+
+
+            const formattedInterests = names.map((name, index) => {
+                // Lowercase and trim the interest name to match slug requirements
+                const key = name.toLowerCase().trim();
+
+                // Grab the corresponding score using the current loop index
+                const val = values[index];
+
+                return { [key]: val };
+            });
+
+            return { success: true, data: formattedInterests }
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

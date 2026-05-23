@@ -34,7 +34,7 @@ class ConnectionModel {
 
         } catch (err) {
             err.from = 'GraphConnection.connectReq';
-            next(err);
+            throw err;
         }
 
     }
@@ -76,7 +76,7 @@ class ConnectionModel {
 
         } catch (err) {
             err.from = "GraphConnection.rejectAReq";
-            next(err);
+            throw err;
         }
     }
 
@@ -125,7 +125,7 @@ class ConnectionModel {
 
         } catch (err) {
             err.from = 'GraphConnection.acceptingRequest';
-            next(err);
+            throw err;
         }
 
     }
@@ -169,7 +169,7 @@ class ConnectionModel {
 
         } catch (err) {
             err.from = 'GraphConnection.disConnecting';
-            next(err);
+            throw err;
         }
 
     }

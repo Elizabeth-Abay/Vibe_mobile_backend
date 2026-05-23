@@ -1,7 +1,7 @@
 // when creating connection two things - userId from decodedAccess and the other user's id from req.body
 
 const ConnectionService = require('../service/connectionService.js');
-const { getMatchedConnectionsService } = require('../service/connectionService.js');
+
 
 
 let connectionService = new ConnectionService();
@@ -74,7 +74,7 @@ class ConnectionController {
     async getAllConnections(req, res) {
         try {
             let { id } = req.decodedAccess;
-            let result = await getConnectionsServiceObj.getAllConnections(id);
+            let result = await connectionService.getAllConnections(id);
 
             return (result.success) ? res.status(200).json(result) : res.status(400).json(result);
 
@@ -90,7 +90,7 @@ class ConnectionController {
         try {
             // console.log("req.decodedAccess from getMachedCOnn " , req.decodedAccess)
             let { id } = req.decodedAccess;
-            let result = await getConnectionsServiceObj.getMatchedConnections({ userId: id });
+            let result = await connectionService.getMatchedConnections({ userId: id });
 
             return (result.success) ? res.status(200).json(result.data) : res.status(400).json(result);
 

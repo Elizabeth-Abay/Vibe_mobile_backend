@@ -10,6 +10,7 @@ const validate = (schema) => {
             req.body = data; 
             next();
         } catch (error) {
+            error.from = 'validate middleware'
             next(error);
         }
     };

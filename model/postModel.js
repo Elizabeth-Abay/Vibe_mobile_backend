@@ -30,12 +30,15 @@ class PostModel {
             }
 
         } catch (err) {
-            err.from = 'PostModel.extractPostInformation';
-            next(err);
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'PostModel.extractPostInformation';
+            }
+            throw err;
         }
     }
 
-    async makePost({  id, categorySelected, postTitle, postContent , postImage }) {
+    async makePost({ id, categorySelected, postTitle, postContent, postImage }) {
         try {
             let query = `
                     INSERT INTO posts (user_id, title, content, image_url , category)
@@ -45,13 +48,16 @@ class PostModel {
 
             let values = [id, postTitle, postContent, postImage, categorySelected];
 
-            let result = await pool.query(query , values);
+            let result = await pool.query(query, values);
 
-            return (result.rowCount === 0) ? { success : false , reason : "Couldnt put in post"} : { success : true , data : result.rows[0]}
+            return (result.rowCount === 0) ? { success: false, reason: "Couldnt put in post" } : { success: true, data: result.rows[0] }
 
         } catch (err) {
-            err.from = 'PostModel.makePost';
-            next(err);
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'PostModel.makePost';
+            }
+            throw err;
         }
     }
 

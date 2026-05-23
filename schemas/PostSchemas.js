@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const allowedCategories = ['tech', 'gaming', 'lifestyle', 'cooking']
+const allowedCategories = ['tech', 'gaming', 'lifestyle', 'cooking' , 'books']
 
 class PostSchemas {
     static getPostCategory = Joi.object({

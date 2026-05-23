@@ -37,7 +37,7 @@ class PostModelG {
 
         } catch (err) {
             err.from = 'PostModelG.selectPostsBasedOnCategory';
-            next(err);
+            throw err;
         }
     }
 
@@ -58,19 +58,25 @@ class PostModelG {
                 RETURN p, i
             `;
 
-            let result = await sessionToRead.run(
-                tx => {
-                    return tx.run(
-                        query, { postId, category }
-                    )
-                }
-            );
+            // let result = await sessionToRead.run(
+            //     tx => {
+            //         return tx.run(
+            //             query, { postId, category }
+            //         )
+            //     }
+
+            // );
+
+
+            let result = await session.executeWrite(async (tx) => {
+                return await tx.run(query, { postId, category });
+            });
 
             return (result.records.length === 0) ? { success: false } : { success: true }
 
         } catch (err) {
             err.from = 'PostModelG.linkPostWithCategory';
-            next(err);
+            throw err;
         }
     }
 

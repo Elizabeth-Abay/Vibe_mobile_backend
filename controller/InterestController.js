@@ -65,7 +65,7 @@ class InterestLinkerController {
             let result = await interestService.getUserInterest(id);
 
             if (result.success) {
-                return res.status(200).json({ message: result.data });
+                return res.status(200).json(result);
             }
 
             return res.status(400).json({ reason: result.reason })

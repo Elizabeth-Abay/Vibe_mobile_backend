@@ -14,7 +14,11 @@ class PostController {
                 res.status(200).json(result) : res.status(400).json({ message: 'bad request' })
 
         } catch (err) {
-            err.from = 'PostController.getPostsInACategory';
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'PostController.getPostsInACategory';
+            }
+            throw err;
             next(err);
         }
 
@@ -48,7 +52,11 @@ class PostController {
                 res.status(200).json(result) : res.status(400).json({ message: 'Couldnt load post' });
 
         } catch (err) {
-            err.from = 'PostController.makeAPost';
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'PostController.makeAPost';
+
+            }
             next(err);
         }
 
