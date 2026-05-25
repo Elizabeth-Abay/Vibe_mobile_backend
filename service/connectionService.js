@@ -34,9 +34,11 @@ class ConnectionService {
             let result = await connectionModel.acceptingRequest({ acceptorId, acceptedId });
 
             // then create a row in the notifications table for the user to see
-            if (!result.succcess) return result;
+            if (!result.success) return result;
 
-            let notifying = await notificationModel.createNotifications({ noitifier_id: acceptorId, notify_to_id: acceptedId, type: 'Connection Request Accepted' });
+            let notifying = await notificationModel.createNotifications({ notifierId: acceptorId, notifyToId: acceptedId, type: 'Connection Request Accepted' });
+
+            console.log("Going into the notifications , " , notifying);
 
             return notifying;
 

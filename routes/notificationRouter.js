@@ -8,7 +8,7 @@ const notificationRouter = express.Router();
 const notificationController = new NotificationController();
 
 
-notificationRouter.get('/' , TokenDecoder.accessDecode , notificationController.getNotifications);
+notificationRouter.get('/' , TokenDecoder.accessDecode , notificationController.getNotifications); // -- worked
 
 
 module.exports = notificationRouter;

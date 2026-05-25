@@ -31,7 +31,7 @@ class NotificationModel {
 
         } catch (err) {
             err.from = 'GraphConnection.disConnecting';
-            next(err);
+            throw err;
         }
     }
 
@@ -42,7 +42,7 @@ class NotificationModel {
             // notifyToId - is the person who made the connection request
 
             let query = `
-                    INSERT INTO notifications( noitifier_id , notify_to_id , type  )
+                    INSERT INTO notifications( notifier_id , notify_to_id , type  )
                     VALUES ($1 , $2 , $3)
                     RETURNING id
                 `;
@@ -51,11 +51,13 @@ class NotificationModel {
 
             let result = await pool.query(query, values);
 
-            return (result.rowCount === 0) ? { success: true } : { success: false, reason: "Couldnt create a notification instance" }
+            console.log("Result from the notification model ", result);
+
+            return (result.rowCount !== 0) ? { success: true } : { success: false, reason: "Couldnt create a notification instance" }
 
         } catch (err) {
             err.from = 'GraphConnection.disConnecting';
-            next(err);
+            throw err;
         }
     }
 

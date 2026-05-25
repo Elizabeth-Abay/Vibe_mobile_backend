@@ -11,11 +11,23 @@ class ConnectionModel {
         try {
             // sentInfo = { id , connectToId}
             let query = `
-                MATCH (requester:Person) WHERE requester.id = $id
-                MATCH (requested:Person) WHERE requested.id = $connectToId
+                MATCH (requester:Person {id: $id})
+                MATCH (requested:Person {id: $connectToId})
+                
+                WHERE requester <> requested
+                AND NOT EXISTS {
+                    (requester)-[:request_Connect|Connected]-(requested)
+                }
+                AND NOT EXISTS {
+                    (requested)-[:request_Connect|Connected]-(requester)
+                }
+                
                 MERGE (requester)-[r:request_Connect]->(requested)
-                ON CREATE SET r.created_At = ${Date.now()}
-                RETURN requester , r , requested
+                ON CREATE SET 
+                    r.created_At = timestamp(),
+                    r.status = 'pending'
+                
+                RETURN requester, r, requested
             `;
 
 
@@ -113,6 +125,10 @@ class ConnectionModel {
 
             let res = result.records[0]?.length;
 
+
+
+            console.log("Connecting graph result " , res);
+
             return (res === 0) ?
                 {
                     success: false,
@@ -122,8 +138,6 @@ class ConnectionModel {
                 {
                     success: true
                 }
-
-
 
         } catch (err) {
             err.from = 'GraphConnection.acceptingRequest';
