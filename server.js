@@ -9,11 +9,16 @@ const profileRouter = require('./routes/profileRouter');
 const requestRouter = require('./routes/requestRouter');
 const tokenRouter = require('./routes/tokenRouter');
 const errorHandler = require('./middleware/globalErrorHandler');
+const connectMongoDB = require('./config/mongooseConfig');
 
 
 dotenv.config();
 
 const { PORT } = process.env;
+
+
+connectMongoDB();
+
 
 
 const server = express();
@@ -36,4 +41,4 @@ server.use('/token', tokenRouter);
 
 server.use(errorHandler);
 
-server.listen(PORT, () => console.log("server up and running on http://localhost:3000"));
+server.listen(PORT, () => console.log(`server up and running on http://localhost:${PORT}`));
