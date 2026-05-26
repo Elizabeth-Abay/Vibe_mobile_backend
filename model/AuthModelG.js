@@ -12,7 +12,7 @@ class AuthModelGraph {
 
         try {
             // create a node
-            let res = await sessionToWrite.executeWrite(
+            let result = await sessionToWrite.executeWrite(
                 tx => {
                     return tx.run(
                         `CREATE (n:Person { id : $id }) RETURN n`,
@@ -23,10 +23,21 @@ class AuthModelGraph {
                 }
             )
 
+            let res = result.records[0]?.length;
 
-            return {
-                success: true
-            }
+            return (res === 0) ?
+                {
+                    success: false,
+                    reason: "Couldnt create the node"
+
+                }
+                :
+                {
+                    success: true
+                }
+
+
+            return
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {

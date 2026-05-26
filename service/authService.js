@@ -1,5 +1,6 @@
 const AuthModelPg = require('../model/AuthModel');
 const AuthModelGraph = require('../model/AuthModelG');
+const AuthModelMong = require('../model/AuthModelMong');
 const generateOTP = require('../utils/otpGenerator');
 const shaHasher = require('../utils/shaHasher');
 const EmailSendingFunctions = require('./emailSending');
@@ -9,6 +10,7 @@ const BcryptRelated = require('../utils/bcryptRelated');
 
 const authModelPg = new AuthModelPg();
 const authModelGraph = new AuthModelGraph();
+const authModelMong = new AuthModelMong();
 const refreshService = new RefreshToken();
 const accessService = new AccessToken();
 
@@ -41,6 +43,14 @@ class AuthService {
             let { id } = userInPg.data;
 
             let userInGraph = await authModelGraph.createGraphNode(id);
+
+            if (!userInGraph.success) return userInGraph;
+
+            
+            let userInMong = await authModelMong.createUser(id);
+
+            if (!userInMong) return userInMong;
+
 
             return {
                 success: true,
@@ -108,7 +118,7 @@ class AuthService {
 
             // console.log("refreshToken from ser" , refreshToken );
 
-            
+
 
             return {
                 success: true,
@@ -167,7 +177,7 @@ class AuthService {
 
             // console.log("refreshToken from ser" , refreshToken );
 
-            
+
 
             return {
                 success: true,
@@ -178,7 +188,7 @@ class AuthService {
 
             }
 
-            
+
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
