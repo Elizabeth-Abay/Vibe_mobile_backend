@@ -61,7 +61,24 @@ class ChatService {
                 // this is so that if lower layer's message won't be masked
                 err.from = 'ChatService.getAllChats';
             }
-            next(err);
+            throw err;
+        }
+    }
+
+
+    async isUserAuthorized({ id, chatId }) {
+        try {
+            let result = await chatModel.checkUserAuthorized({ id, chatId });
+
+            return result;
+
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'ChatService.isUserAuthorized';
+            }
+            throw err;
         }
     }
 

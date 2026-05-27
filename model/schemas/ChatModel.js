@@ -4,8 +4,9 @@ const ChatSchema = new mongoose.Schema({
     // id will be assigned automatically
     participants: [
         {
-            type: String, // Pointing to your user identifiers (like your sync'd IDs)
-            required: true
+            type: mongoose.Schema.Types.ObjectId, // <-- MongoDB ObjectId
+            ref: 'User',
+            required : true
         }
     ],
     created_at: {
@@ -16,6 +17,6 @@ const ChatSchema = new mongoose.Schema({
 
 
 
-const Chat = mongoose.model('Chat' , ChatSchema);
+const Chat = mongoose.model('Chat', ChatSchema);
 
 module.exports = Chat;

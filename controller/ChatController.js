@@ -22,6 +22,23 @@ class ChatController {
             next(err);
         }
     }
+
+
+    async getOneChat(req, res, next) {
+        try {
+            let { id } = req.decodedAccess;
+
+            let result = await chatService.getOneChat(id);
+
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'ChatController.getOne';
+            }
+            next(err);
+        }
+    }
 }
 
 

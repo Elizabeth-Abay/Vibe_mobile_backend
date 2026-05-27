@@ -29,16 +29,40 @@ class ChatModel {
             );
 
 
-            if (!result) return { success : false , reason : "Problem with Mongoose"}
+            if (!result) return { success: false, reason: "Problem with Mongoose" }
 
             return {
-                success : true,
-                data : result
+                success: true,
+                data: result
             }
 
 
         } catch (err) {
             err.from = 'ChatModel.getAllChats'
+            throw err;
+        }
+    }
+
+
+    async checkUserAuthorized({ id, chatId }) {
+        try {
+            // check if the id is part of 
+            const result = await Chat.exists({
+                _id: chatId,
+                participants: id
+            });
+
+            return (!result) ?
+                {
+                    success: false, reason: "User not authorized or chat don't exist"
+                }
+                :
+                {
+                    success: true
+                }
+
+        } catch (err) {
+            err.from = 'ChatModel.checkUserAuthorized'
             throw err;
         }
     }
