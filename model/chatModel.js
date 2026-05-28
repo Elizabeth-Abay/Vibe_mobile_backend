@@ -66,6 +66,84 @@ class ChatModel {
             throw err;
         }
     }
+
+    async findOne({ id, chatWith }) {
+        try {
+            const existingChat = await Chat.findOne({
+                participants: {
+                    $all: [id, chatWith],               // Must contain all given IDs
+                    $size: 2        // Must NOT contain any extra IDs
+                }
+            });
+
+            // 2. If found, just return the existing chat's ID
+            return (existingChat)
+                ?
+                {
+                    success: true,
+                    isNew : false,
+                    data: existingChat
+                }
+                :
+                {
+                    success: false,
+                    reason: "couldn't find chat"
+
+                }
+
+
+        } catch (err) {
+            err.from = 'ChatModel.findOne'
+            throw err;
+        }
+
+    }
+
+    async createOne({ id, chatWith }) {
+        try {
+            const newChat = await Chat.create({
+                participants: [id, chatWith]
+            });
+
+            return (newChat) ?
+                {
+                    success: true,
+                    isNew: true,
+                    data : newChat
+                }
+                :
+                {
+                    success: false,
+                    reason: "couldn't create chat"
+                }
+
+
+        } catch (err) {
+            err.from = 'ChatModel.createOne'
+            throw err;
+        }
+    }
+
+    async findOrCreateChat({ id, chatWith }) {
+        try {
+            // if there is one find it else create new
+            let existingChat = await this.findOne({ id, chatWith });
+
+            if (existingChat.success) return existingChat;
+
+            let newChat = await this.createOne({ id, chatWith });
+
+            return newChat;
+
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'ChatModel.findOrCreateChat'
+            }
+            throw err;
+        }
+    }
+
 }
 
 

@@ -68,7 +68,7 @@ class ChatService {
 
     async isUserAuthorized({ id, chatId }) {
         try {
-            let result = await chatModel.checkUserAuthorized({ id, chatId });
+            let result = await chatModel.findOrCreateChat({ id, chatId });
 
             return result;
 
@@ -77,6 +77,46 @@ class ChatService {
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
                 err.from = 'ChatService.isUserAuthorized';
+            }
+            throw err;
+        }
+    }
+
+    async createOrFindChat({ id, chatWith }) {
+        try {
+            let result = await chatModel.findOrCreateChat({ id, chatWith });
+
+            if (!result.success) return result;
+
+            // else fetch the profile of the second user and attach and send it
+            let { data } = result;
+
+            let othersProfile ;
+
+            // else fetch the second users profile
+            for (participantId of data.participants){
+                if (participantId !== id){
+                    othersProfile = await UserProfileGetter.getProfileInfo([participantId]);
+
+                    if (!othersProfile.success) return othersProfile;
+
+                    else {
+                        data.otherUserProfile = othersProfile.data;
+                    }
+                }
+            }
+
+            // this will be used to represent the second user at the top
+            return {
+                success : true,
+                data
+            }
+
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'ChatService.createOrFindChat';
             }
             throw err;
         }

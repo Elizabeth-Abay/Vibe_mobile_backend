@@ -28,52 +28,53 @@ class MessageService {
             if (data.length === 0) return { success: true, data: [] }
             // meaning there have not been any messages
 
-            let returnedList = [];
-            let usersProfileUrl;
-            let otherUserProfileUrl;
+            // let returnedList = [];
+            // let usersProfileUrl;
+            // let otherUserProfileUrl;
 
             for (msg of data) {
                 // setting up the message structure
+                // determinig where it should be displayed
                 if (msg.sender_id === id) {
-                    if (!usersProfileUrl) {
-                        let result = await UserProfileGetter.getProfileInfo([id]);
+                    // if (!usersProfileUrl) {
+                    //     let result = await UserProfileGetter.getProfileInfo([id]);
 
-                        if (!result.success) return result;
+                    //     if (!result.success) return result;
 
-                        usersProfileUrl = result.data;
+                    //     usersProfileUrl = result.data;
 
-                    }
+                    // }
 
                     returnedList.push({
                         mine: true,
-                        profileUrl: usersProfileUrl.profile_url,
-                        name: usersProfileUrl.name,
-                        userName: usersProfileUrl.user_name,
                         msgId: msg._id,
                         text: msg.text,
                         createdAt: msg.created_at
+                        // profileUrl: usersProfileUrl.profile_url,
+                        // name: usersProfileUrl.name,
+                        // userName: usersProfileUrl.user_name,
                     })
                 }
                 else {
                     // then it is the other person's message
 
-                    if (!otherUserProfileUrl) {
-                        let result = await UserProfileGetter.getProfileInfo([msg.sender_id]);
+                    // if (!otherUserProfileUrl) {
+                    //     let result = await UserProfileGetter.getProfileInfo([msg.sender_id]);
 
-                        if (!result.success) return result;
+                    //     if (!result.success) return result;
 
-                        otherUserProfileUrl = result.data;
+                    //     otherUserProfileUrl = result.data;
 
-                    }
+                    // }
 
                     returnedList.push({
                         mine: false,
-                        profileUrl: otherUserProfileUrl.profile_url,
-                        name: otherUserProfileUrl.name,
-                        userName: otherUserProfileUrl.user_name,
                         msgId: msg._id,
                         text: msg.text,
-                        createdAt: msg.created_at
+                        createdAt: msg.created_at,
+                        // profileUrl: otherUserProfileUrl.profile_url,
+                        // name: otherUserProfileUrl.name,
+                        // userName: otherUserProfileUrl.user_name,
                     })
 
                 }
@@ -134,11 +135,7 @@ class MessageService {
     async deleteMessage({ id, msgId }) {
         try {
             // u can only delete ur message
-            let isUserAuthorized = await chatService.isUserAuthorized({ id, chatId });
-
-
-            if (!isUserAuthorized.success) return isUserAuthorized;
-
+            // and that is written into the model
             let result = await messageModel.deleteMessage({ id, msgId });
 
             return result;

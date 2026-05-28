@@ -23,12 +23,18 @@ class ChatController {
         }
     }
 
-
-    async getOneChat(req, res, next) {
+    async createOrFindChat(req, res, next) {
         try {
             let { id } = req.decodedAccess;
+            let { chatWith } = req.body;
 
-            let result = await chatService.getOneChat(id);
+            let result = await chatService.createOrFindChat({ id, chatWith });
+
+            return (result.success)
+                ?
+                res.status(200).json(result)
+                :
+                res.status(400).json(result);
 
 
         } catch (err) {
@@ -39,6 +45,8 @@ class ChatController {
             next(err);
         }
     }
+
+
 }
 
 

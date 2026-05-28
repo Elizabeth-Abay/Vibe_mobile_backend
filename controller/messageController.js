@@ -27,16 +27,74 @@ class MessageController {
 
     }
 
-    async createMessage(req,res,next){
+    async createMessage(req, res, next) {
+        try {
+            let { id } = req.decodedAccess;
+
+            let { chatId, message } = req.body;
+
+            let result = await messageService.createMessage({ id, chatId, message });
+
+            return (result.success)
+                ?
+                res.status(201).json(result)
+                :
+                res.status(400).json(result)
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'MessageController.createMessage';
+            }
+            next(err)
+        }
 
     }
 
-    async updateMessage(req,res,next){
-        
+    async updateMessage(req, res, next) {
+        try {
+            let { id } = req.decodedAccess;
+
+            let { chatId, msgId, newMessage } = req.body;
+
+            let result = await messageService.updateMessage({ id, chatId, msgId, newMessage });
+
+            return (result.success)
+                ?
+                res.status(201).json(result)
+                :
+                res.status(400).json(result)
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'MessageController.updateMessage';
+            }
+            next(err)
+        }
+
     }
 
-    async deleteMessage(req,res,next){
-        
+    async deleteMessage(req, res, next) {
+        try {
+            let { id } = req.decodedAccess;
+
+            let { msgId } = req.body;
+
+            let result = await messageService.deleteMessage({ id, msgId });
+
+            return (result.success)
+                ?
+                res.status(204).json({ success: true })
+                :
+                res.status(400).json(result)
+
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'MessageController.deleteMessage';
+            }
+            next(err)
+        }
+
     }
 
 }
