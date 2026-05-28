@@ -68,7 +68,7 @@ class ChatService {
 
     async isUserAuthorized({ id, chatId }) {
         try {
-            let result = await chatModel.findOrCreateChat({ id, chatId });
+            let result = await chatModel.checkUserAuthorized({ id, chatId });
 
             return result;
 

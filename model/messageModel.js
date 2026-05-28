@@ -3,15 +3,11 @@ const Message = require('./schemas/MessageModel');
 class MessageModel {
     async getMessagesInAChat({ id, chatId }) {
         try {
+    
             const messages = await Message.find({ chat_id: chatId })
-                .populate({
-                    path: 'chat_id',
-                    // Mongoose automatically handles casting 'userId' to an ObjectId here
-                    match: { participants: id },
-                    select: '_id participants'
-                })
-                .sort({ timestamp: -1 }) // get the newest first
-                .limit(30) // limit the number to 30
+                .sort({ timestamp: -1 })
+                .limit(30)
+                .lean();
 
 
             if (!messages) return { success: false, reason: 'Couldnt fetch messages | u r unauthorized' };
