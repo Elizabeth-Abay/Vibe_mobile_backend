@@ -6,7 +6,7 @@ class ChatModel {
         try {
             let result = await Chat.find(
                 // 1. Filter: Find all chats where id is in the participants array
-                { participants: id },
+                { participants: id, type: 'chat' },
 
                 // 2. Projection: Shape the output data
                 {
@@ -26,10 +26,12 @@ class ChatModel {
                         ]
                     }
                 }
-            );
+            ).lean(); // will be clean js object
+
+            // and find method will return [] if nothing is found
 
 
-            if (!result) return { success: false, reason: "Problem with Mongoose" }
+            if (result.length === 0) return { success: false, reason: "Problem with Mongoose" }
 
             return {
                 success: true,
@@ -67,21 +69,36 @@ class ChatModel {
         }
     }
 
-    async findOne({ id, chatWith }) {
+    async findOne({ id, chatWith, type }) {
         try {
-            const existingChat = await Chat.findOne({
-                participants: {
-                    $all: [id, chatWith],               // Must contain all given IDs
-                    $size: 2        // Must NOT contain any extra IDs
-                }
-            });
+            let existingChat;
+
+            if (type === 'chat') {
+                existingChat = await Chat.findOne({
+                    participants: {
+                        $all: [id, chatWith],               // Must contain all given IDs
+                        $size: 2        // Must NOT contain any extra IDs
+                    },
+                    type: 'chat'
+                });
+            } else {
+                // means we are tryig to find self messaging
+                existingChat = await Chat.findOne({
+                    participants: {
+                        $all: [id],               // Must contain all given IDs
+                        $size: 1      // Must NOT contain any extra IDs
+                    },
+                    type: 'self'
+                });
+            }
+
 
             // 2. If found, just return the existing chat's ID
-            return (existingChat)
+            return (existingChat.length !== 0)
                 ?
                 {
                     success: true,
-                    isNew : false,
+                    isNew: false,
                     data: existingChat
                 }
                 :
@@ -99,17 +116,29 @@ class ChatModel {
 
     }
 
-    async createOne({ id, chatWith }) {
+    async createOne({ id, chatWith, type }) {
         try {
-            const newChat = await Chat.create({
-                participants: [id, chatWith]
-            });
+            let newChat;
 
-            return (newChat) ?
+            if (type === 'chat') {
+                newChat = await Chat.create({
+                    participants: [id, chatWith],
+                    type: 'chat'
+                });
+            } else {
+                // means u are trying to create a chat with urself
+                newChat = await Chat.create({
+                    participants: [id],
+                    type: 'self'
+                });
+            }
+
+
+            return (newChat.length !== 0) ?
                 {
                     success: true,
                     isNew: true,
-                    data : newChat
+                    data: newChat
                 }
                 :
                 {
@@ -127,11 +156,11 @@ class ChatModel {
     async findOrCreateChat({ id, chatWith }) {
         try {
             // if there is one find it else create new
-            let existingChat = await this.findOne({ id, chatWith });
+            let existingChat = await this.findOne({ id, chatWith, type: 'chat' });
 
             if (existingChat.success) return existingChat;
 
-            let newChat = await this.createOne({ id, chatWith });
+            let newChat = await this.createOne({ id, chatWith, type: 'chat' });
 
             return newChat;
 
@@ -139,6 +168,27 @@ class ChatModel {
         } catch (err) {
             if (typeof err === 'object' && !err.from) {
                 err.from = 'ChatModel.findOrCreateChat'
+            }
+            throw err;
+        }
+    }
+
+
+    async getOrCreateMyChat(id) {
+        try {
+            // the id is the participant id so filter using that only and return the id
+            // if there is one find it else create new
+            let existingChat = await this.findOne({ id, type: 'self' });
+
+            if (existingChat.success) return existingChat;
+
+            let newChat = await this.createOne({ id, type: 'self' });
+
+            return newChat;
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'ChatModel.getMyChat'
             }
             throw err;
         }

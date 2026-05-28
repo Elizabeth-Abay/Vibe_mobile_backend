@@ -91,11 +91,11 @@ class ChatService {
             // else fetch the profile of the second user and attach and send it
             let { data } = result;
 
-            let othersProfile ;
+            let othersProfile;
 
             // else fetch the second users profile
-            for (participantId of data.participants){
-                if (participantId !== id){
+            for (participantId of data.participants) {
+                if (participantId !== id) {
                     othersProfile = await UserProfileGetter.getProfileInfo([participantId]);
 
                     if (!othersProfile.success) return othersProfile;
@@ -108,7 +108,7 @@ class ChatService {
 
             // this will be used to represent the second user at the top
             return {
-                success : true,
+                success: true,
                 data
             }
 
@@ -117,6 +117,22 @@ class ChatService {
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
                 err.from = 'ChatService.createOrFindChat';
+            }
+            throw err;
+        }
+    }
+
+
+    async getOrCreateMyChat(id) {
+        try {
+            let result = await chatModel.getOrCreateMyChat(id);
+
+            return result;
+            // bc when it loads i expect the page to do a request again with the chatId given
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'ChatService.getMyChat';
             }
             throw err;
         }

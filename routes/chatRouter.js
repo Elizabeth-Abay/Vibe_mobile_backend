@@ -9,6 +9,8 @@ const chatController = new ChatController();
 
 
 chatRouter.get('/get-all', TokenDecoder.accessDecode, chatController.getAllChats);
-chatRouter.post('/get-single-chat', TokenDecoder.accessDecode , chatController.createOrFindChat)
+chatRouter.post('/get-single-chat', TokenDecoder.accessDecode, chatController.createOrFindChat);
+
+chatRouter.get('/self-chat', TokenDecoder.accessDecode, chatController.getOrCreateMyChat);
 
 module.exports = chatRouter;

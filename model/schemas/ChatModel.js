@@ -6,12 +6,18 @@ const ChatSchema = new mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId, // <-- MongoDB ObjectId
             ref: 'User',
-            required : true
+            required: true
         }
     ],
     created_at: {
         type: Date,
         default: Date.now
+    },
+    type: {
+        type: String,
+        enum: ['chat', 'self'], // Strictly limits the values to these two options
+        default: 'chat',        // Falls back to 'chat' if no type is provided
+        required: true          // Ensures the type field is always populated
     }
 });
 
