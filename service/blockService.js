@@ -5,12 +5,12 @@ const UserProfileGetter = require('../model/UserProfileGetHelper');
 const blockModel = new BlockModel();
 
 class BlockService {
-    async checkUserNotBlocked({ id, senderId }) {
+    async checkUserNotBlocked({ recipientId, senderId }) {
         try {
             // we get to the userid and then check if the senderId is part 
             // of the blocked list of the user's list 
 
-            let result = await blockModel.checkUserNotBlocked({ id, senderId });
+            let result = await blockModel.checkUserNotBlocked({ recipientId, senderId });
 
             return result;
 

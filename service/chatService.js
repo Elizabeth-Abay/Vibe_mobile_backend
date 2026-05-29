@@ -82,6 +82,23 @@ class ChatService {
         }
     }
 
+
+    async getParticipantsId(chatId) {
+        try {
+            let result = await chatModel.getParticipantsId(chatId);
+
+            return result;
+
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'ChatService.getParticipantsId';
+            }
+            throw err;
+        }
+
+    }
+
     async createOrFindChat({ id, chatWith }) {
         try {
             let result = await chatModel.findOrCreateChat({ id, chatWith });

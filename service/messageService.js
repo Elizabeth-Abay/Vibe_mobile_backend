@@ -1,10 +1,12 @@
 const MessageModel = require('../model/messageModel');
 const UserProfileGetter = require('../model/UserProfileGetHelper');
 const ChatService = require('./chatService');
+const BlockService = require('./blockService');
 
 
 const messageModel = new MessageModel();
 const chatService = new ChatService();
+const blockService = new BlockService();
 
 
 class MessageService {
@@ -153,8 +155,27 @@ class MessageService {
         try {
             let isUserAuthorized = await chatService.isUserAuthorized({ id, chatId });
 
-
             if (!isUserAuthorized.success) return isUserAuthorized;
+
+            // before sending messages check if sender is allowed to send
+            let participants = await chatService.getParticipantsId(chatId);
+
+            if (!participants.success) return participants;
+
+            // check which is sender and which is recipient
+            let { data } = participants;
+            let senderId, recipientId;
+
+            for (userId of data) {
+                if (userId === id) senderId = userId;
+                else recipientId = userId;
+            }
+
+            // check if user is blocked or not
+
+            let isNotBlocked = await blockService.checkUserNotBlocked({ recipientId, senderId });
+
+            if (!isNotBlocked.success) return isNotBlocked;
 
             let result = await messageModel.createMessage({ id, message, chatId });
 

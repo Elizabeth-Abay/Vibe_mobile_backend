@@ -46,6 +46,24 @@ class ChatModel {
     }
 
 
+    async getParticipantsId(chatId) {
+        try {
+            const result = await ChatModel.findById(chatId)
+                .select('participants')
+                .lean();
+
+
+            if (!result) return { success: false, reason: "Chat problem" }
+
+            return { success: true, data: result.participants }
+
+        } catch (err) {
+            err.from = 'ChatModel.getParticipantsId'
+            throw err;
+        }
+    }
+
+
     async checkUserAuthorized({ id, chatId }) {
         try {
             // check if the id is part of 

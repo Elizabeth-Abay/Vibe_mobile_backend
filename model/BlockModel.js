@@ -2,10 +2,10 @@ const UserModel = require('./schemas/UserModel');
 
 
 class BlockModel {
-    async checkUserNotBlocked({ id, senderId }) {
+    async checkUserNotBlocked({ recipientId, senderecipientId }) {
         try {
             const recipient = await UserModel.findOne({
-                id: id
+                id: recipientId
             }).lean();
 
             if (!recipient) {
