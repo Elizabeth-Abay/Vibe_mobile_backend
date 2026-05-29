@@ -115,7 +115,7 @@ class AuthService {
             }
 
             accessToken = accessToken.data;
-            refreshToken = refreshToken.data;
+            refreshToken = refreshToken.dataForUser;
 
             // console.log("refreshToken from ser" , refreshToken );
 
@@ -199,7 +199,7 @@ class AuthService {
             }
 
             accessToken = accessToken.data;
-            refreshToken = refreshToken.data;
+            refreshToken = refreshToken.dataForUser;
 
             // console.log("refreshToken from ser" , refreshToken );
 

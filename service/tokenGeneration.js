@@ -73,7 +73,8 @@ class RefreshToken {
             // then return this as a data
             return {
                 success: true,
-                data: refreshToken
+                dataForUser: refreshToken,
+                dataFromDb : refToken.data
             }
 
         } catch (err) {

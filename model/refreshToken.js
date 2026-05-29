@@ -29,7 +29,7 @@ class RefreshToken {
     async getRefTokenInfo(hashedTokenString) {
         try {
             let query = `
-                SELECT user_id , id 
+                SELECT user_id , id , is_revoked
                 FROM refresh_token WHERE 
                 is_revoked IS FALSE 
                 AND token_hash = $1
