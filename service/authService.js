@@ -227,18 +227,13 @@ class AuthService {
 
     async logOut(randomString) {
         try {
+            // log-out means to invalidate all refresh tokens
             let hashedRandomString = shaHasher(randomString);
 
-            let refreshTokenInfo = await refreshService.getTokenInfo(hashedRandomString);
+            let invalidateRefreshToken = await refreshService.invalidateForLogOut(hashedRandomString);
 
-            if (!refreshTokenInfo.success) return refreshTokenInfo;
+            return invalidateRefreshToken;
 
-            let { user_id } = refreshTokenInfo.data;
-
-
-            let result = await authModelPg.logOut(user_id);
-
-            return result;
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

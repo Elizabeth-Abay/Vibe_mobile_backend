@@ -115,9 +115,25 @@ class RefreshToken {
     }
 
 
-    static async invalidateForLogOut(hashedRandom){
-        try{
-            
+    static async invalidateForLogOut(hashedRandom) {
+        try {
+            let query = `
+                UPDATE refresh_token
+                SET is_revoked = true
+                WHERE token_hash = $1
+                RETURNING id
+            `;
+
+            let values = [hashedRandom];
+
+            let result = await pool.query(query, values);
+
+            return (result.rowCount === 0)
+                ?
+                { success: false }
+                :
+                { success: true }
+
 
         } catch (err) {
             err.from = 'RefreshToken.invalidateForLogOut'

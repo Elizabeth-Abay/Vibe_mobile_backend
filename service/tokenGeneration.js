@@ -74,7 +74,7 @@ class RefreshToken {
             return {
                 success: true,
                 dataForUser: refreshToken,
-                dataFromDb : refToken.data
+                dataFromDb: refToken.data
             }
 
         } catch (err) {
@@ -127,6 +127,19 @@ class RefreshToken {
         } catch (err) {
             if (typeof err === 'object' && !err.from) {
                 err.from = 'RefreshToken.invalidateAllRefresh';
+            }
+            throw err;
+        }
+    }
+
+    async invalidateForLogOut(randomString) {
+        try {
+            let hashedRandom = shaHasher(randomString);
+
+            let result = await  refreshTokenModel.invalidateForLogOut(hashedRandom)
+        } catch (err) {
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'RefreshToken.revokeToken';
             }
             throw err;
         }
