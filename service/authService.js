@@ -7,6 +7,7 @@ const EmailSendingFunctions = require('./emailSending');
 const doesOtpMatch = require('../utils/OtpMatched');
 const { RefreshToken, AccessToken } = require('./tokenGeneration');
 const BcryptRelated = require('../utils/bcryptRelated');
+c
 
 const authModelPg = new AuthModelPg();
 const authModelGraph = new AuthModelGraph();
@@ -46,7 +47,7 @@ class AuthService {
 
             if (!userInGraph.success) return userInGraph;
 
-            
+
             let userInMong = await authModelMong.createUser(id);
 
             if (!userInMong) return userInMong;
@@ -140,7 +141,32 @@ class AuthService {
     }
 
 
-    async resendOtp() {
+    async resendOtp(id) {
+        try {
+
+            let userInfo = await authModelPg.getUserEmail(id);
+
+            if (!userInfo.success) return userInfo;
+
+            let { email } = userInfo.data;
+
+            // else generate and hash otp and email it
+            let OTP = generateOTP();
+            let otpHashed = shaHasher(OTP);
+
+            // sending email
+            await EmailSendingFunctions.sendingOTPEmail({ email, OTP });
+
+            return { success: true }
+
+        } catch (err) {
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                err.from = 'AuthService.resendOtp';
+            }
+            throw err;
+        }
+
 
     }
 
@@ -203,7 +229,16 @@ class AuthService {
         try {
             let hashedRandomString = shaHasher(randomString);
 
-            let result = await authModelPg.logOut(hashedRandomString);
+            let refreshTokenInfo = await refreshService.getTokenInfo(hashedRandomString);
+
+            if (!refreshTokenInfo.success) return refreshTokenInfo;
+
+            let { user_id } = refreshTokenInfo.data;
+
+
+            let result = await authModelPg.logOut(user_id);
+
+            return result;
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

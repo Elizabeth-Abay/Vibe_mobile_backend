@@ -126,6 +126,33 @@ class AuthModelPg {
     }
 
 
+    async getUserEmail(id) {
+        try {
+            let query = `
+                    SELECT email 
+                    FROM users
+                    WHERE id = $1
+                `;
+
+            let values = [id];
+
+            let result = await pool.query(query, values);
+
+            return (result.rowCount === 0) ? { success: false, reason: "Couldn't find user" } : { success: true, data: result.rows[0] };
+
+
+
+        } catch (err) {
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthModelPg.getUserEmail';
+            }
+            throw err;
+        }
+    }
+
+
     async resendOtp({ email, otpHashed }) {
         try {
             let query = `
@@ -171,7 +198,7 @@ class AuthModelPg {
 
             let result = await pool.query(query, values);
 
-            return (result.rowCount === 0) ? { success: false , reason : "Couldn't put in password" } : { success: true };
+            return (result.rowCount === 0) ? { success: false, reason: "Couldn't put in password" } : { success: true };
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
@@ -219,11 +246,29 @@ class AuthModelPg {
 
     }
 
-    async logOut(randomString) {
+    async logOut(id) {
         try {
             let query = `
-                UPDATE ref
-            `
+                UPDATE users
+                SET status = 'logged-out'
+                WHERE id = $1
+                RETURNING id
+            `;
+
+            let values = [id];
+
+            let result = await pool.query(query, values);
+
+            return (result.rowCount === 0) ?
+                {
+                    success: false,
+                    reason: "Account dont exist"
+                }
+                :
+                {
+                    success: true,
+                    data: result.rows[0]
+                }
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that

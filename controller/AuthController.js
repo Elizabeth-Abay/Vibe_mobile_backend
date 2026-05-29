@@ -26,7 +26,7 @@ class AuthController {
                 // this is so that if lower layer's message won't be masked
                 err.from = "AuthControllers.createUser";
             }
-            
+
             next(err); // this will call the error handler
         }
     }
@@ -57,6 +57,23 @@ class AuthController {
 
 
     async resendOtp(req, res, next) {
+        try {
+            let { id } = req.body;
+            let result = await authService.resendOtp(id);
+
+            return (result.success) ?
+                res.status(200).json(result)
+                :
+                res.status(400).json(result)
+
+        } catch (err) {
+            // the lower layers will throw error and the upper layer will be the one to catch that
+            if (typeof err === 'object' && !err.from) {
+                // this is so that if lower layer's message won't be masked
+                err.from = 'AuthControllers.resendOtp';
+            }
+            next(err);
+        }
 
     }
 
@@ -76,10 +93,10 @@ class AuthController {
 
 
         } catch (err) {
-           // the lower layers will throw error and the upper layer will be the one to catch that
+            // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                 err.from = 'AuthControllers.logIn';
+                err.from = 'AuthControllers.logIn';
             }
             next(err);
         }
@@ -92,11 +109,18 @@ class AuthController {
 
             let result = await authService.logOut(randomString);
 
+            return result.success
+                ?
+                res.status(200).json(result) 
+                :
+                res.status(400).json(result);
+
+
 
         } catch (err) {
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                 err.from = 'AuthControllers.logOut';
+                err.from = 'AuthControllers.logOut';
             }
             next(err);
         }

@@ -16,6 +16,9 @@ authRouter.post('/create-a-user' , validate(AuthSchemas.registrationChecker) , a
 authRouter.post('/verify-user-otp' , validate(AuthSchemas.verifyUserOtp) , authController.verifyUserOtp);
 
 
+authRouter.post('/resend-user-otp' , authController.resendOtp)
+
+
 // sign in -- works
 authRouter.post('/log-in' , validate(AuthSchemas.logInValidator) , authController.logIn);
 
