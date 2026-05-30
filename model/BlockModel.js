@@ -2,11 +2,11 @@ const UserModel = require('./schemas/UserModel');
 
 
 class BlockModel {
-    async checkUserNotBlocked({ recipientId, senderecipientId }) {
+    async checkUserNotBlocked({ recipientId, senderId }) {
         try {
             const recipient = await UserModel.findOne({
                 id: recipientId
-            }).lean();
+            });
 
             if (!recipient) {
                 throw new Error("Message recipient not found");

@@ -40,9 +40,9 @@ server.use('/profile', profileRouter); // -- worked
 server.use('/request', requestRouter); // -- worked
 server.use('/connection', connectionRouter); // -- worked
 server.use('/notification', notificationRouter); // -- worked
-server.use('/token', tokenRouter);
-server.use('/message', messageRouter);
-server.use('/chat', chatRouter);
+server.use('/token', tokenRouter); // -- worked
+server.use('/message', messageRouter); // -- worked
+server.use('/chat', chatRouter); // -- worked
 server.use('/delete', deleteAccRouter);
 server.use('/block', blockRouter);
 

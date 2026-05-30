@@ -1,10 +1,13 @@
 const RefreshTokenService = require('../service/refreshingTokensService');
 
 class TokenController {
-    static async tokenGeneration(req, res) {
+    static async tokenGeneration(req, res, next) {
         try {
             // call the token generation logic
             let { randomString } = req.decodedRefresh;
+
+            console.log("Random string successfully found", randomString);
+
 
             let result = await RefreshTokenService.generateNewTokens(randomString);
 
@@ -15,7 +18,9 @@ class TokenController {
                 res.status(400).json(result)
 
         } catch (err) {
-            req.from = "TokenController.tokenGeneration"
+            if (typeof err === 'object' && !err.from) {
+                err.from = "TokenController.tokenGeneration";
+            }
             next(err)
         }
     }

@@ -40,8 +40,8 @@ class RefreshTokenService {
             // invalidate the old refresh
             let { dataFromDb } = newRefresh;
 
-            // invalidating the old refresh token
-            let invalidateRefresh = await refreshService.invalidateRefresh({ oldTokenId: tokenRecord.id, newTokenId: dataFromDb });
+            // invalidate old refresh
+            let invalidateRefresh = await refreshService.invalidateRefresh({ oldTokenId: tokenRecord.id, newTokenId: dataFromDb.id });
 
 
             if (!invalidateRefresh.success) return invalidateRefresh;

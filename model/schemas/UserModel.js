@@ -12,7 +12,7 @@ const UserSchema = new mongoose.Schema({
     },
     blocked_users: [
         {
-            type: mongoose.Schema.Types.ObjectId, // Tells Mongoose this is a database ID
+            type: String, // Tells Mongoose this is a database ID
             ref: 'User'
         }
     ]

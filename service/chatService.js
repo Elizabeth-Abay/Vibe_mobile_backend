@@ -16,7 +16,7 @@ class ChatService {
 
             let ids = [];
 
-            for (chat of result.data) {
+            for (let chat of result.data) {
                 ids.push(chat.otherParticipant)
             };
 
@@ -108,10 +108,12 @@ class ChatService {
             // else fetch the profile of the second user and attach and send it
             let { data } = result;
 
+
+            console.log("Result of createOrFindChat " , data.participants);
             let othersProfile;
 
             // else fetch the second users profile
-            for (participantId of data.participants) {
+            for (let participantId of data.participants) {
                 if (participantId !== id) {
                     othersProfile = await UserProfileGetter.getProfileInfo([participantId]);
 

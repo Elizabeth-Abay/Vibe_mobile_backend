@@ -30,11 +30,11 @@ class MessageService {
             if (data.length === 0) return { success: true, data: [] }
             // meaning there have not been any messages
 
-            // let returnedList = [];
+            let returnedList = [];
             // let usersProfileUrl;
             // let otherUserProfileUrl;
 
-            for (msg of data) {
+            for (let msg of data) {
                 // setting up the message structure
                 // determinig where it should be displayed
                 if (msg.sender_id === id) {
@@ -84,15 +84,15 @@ class MessageService {
             }
 
 
-            let sentObj = {
-                otherPersonProfile: otherUserProfileUrl,
-                messages: returnedList
-            }
+            // let sentObj = {
+            //     otherPersonProfile: otherUserProfileUrl,
+            //     messages: returnedList
+            // }
 
 
             return {
                 success: true,
-                data: sentObj
+                data: returnedList
             }
 
 
@@ -151,7 +151,7 @@ class MessageService {
     }
 
 
-    async createMessage({ id, message, chatId }) {
+    async createMessage({ id, message, chatId, type }) {
         try {
             let isUserAuthorized = await chatService.isUserAuthorized({ id, chatId });
 
@@ -166,16 +166,20 @@ class MessageService {
             let { data } = participants;
             let senderId, recipientId;
 
-            for (userId of data) {
+            for (let userId of data) {
                 if (userId === id) senderId = userId;
                 else recipientId = userId;
             }
 
             // check if user is blocked or not
+            // if type = self just create the message
 
-            let isNotBlocked = await blockService.checkUserNotBlocked({ recipientId, senderId });
+            if (!type || type !== 'self') {
+                let isNotBlocked = await blockService.checkUserNotBlocked({ recipientId, senderId });
 
-            if (!isNotBlocked.success) return isNotBlocked;
+                if (!isNotBlocked.success) return isNotBlocked;
+
+            }
 
             let result = await messageModel.createMessage({ id, message, chatId });
 
@@ -185,7 +189,7 @@ class MessageService {
         } catch (err) {
             if (typeof err === 'object' && !err.from) {
                 // this is so that if lower layer's message won't be masked
-                err.from = 'ChatService.createMessage';
+                err.from = 'MessageService.createMessage';
             }
             throw err;
         }

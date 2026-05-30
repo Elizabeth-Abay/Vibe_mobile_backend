@@ -6,9 +6,9 @@ const messageRouter = express.Router();
 const messageController = new MessageController();
 
 
-messageRouter.get('/get-messages', TokenDecoder.accessDecode,messageController.getMessagesInChat);
-messageRouter.post('/send-message', TokenDecoder.accessDecode,messageController.createMessage);
-messageRouter.post('/update-message', TokenDecoder.accessDecode,messageController.updateMessage);
-messageRouter.post('/delete-message', TokenDecoder.accessDecode,messageController.deleteMessage);
+messageRouter.get('/get-messages/:chatId', TokenDecoder.accessDecode, messageController.getMessagesInChat); // -- worked
+messageRouter.post('/send-message', TokenDecoder.accessDecode, messageController.createMessage); // -- worked
+messageRouter.post('/update-message', TokenDecoder.accessDecode, messageController.updateMessage); // -- worked
+messageRouter.delete('/delete-message/:msgId', TokenDecoder.accessDecode, messageController.deleteMessage); // -- worked
 
 module.exports = messageRouter;

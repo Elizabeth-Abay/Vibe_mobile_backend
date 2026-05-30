@@ -8,7 +8,7 @@ class MessageController {
         try {
             let { id } = req.decodedAccess;
 
-            let { chatId } = req.body;
+            let { chatId } = req.params;
 
             let result = await messageService.getMessagesInAChat({ id, chatId });
 
@@ -31,9 +31,9 @@ class MessageController {
         try {
             let { id } = req.decodedAccess;
 
-            let { chatId, message } = req.body;
+            let { chatId, message , type } = req.body;
 
-            let result = await messageService.createMessage({ id, chatId, message });
+            let result = await messageService.createMessage({ id, chatId, message , type });
 
             return (result.success)
                 ?
@@ -77,7 +77,7 @@ class MessageController {
         try {
             let { id } = req.decodedAccess;
 
-            let { msgId } = req.body;
+            let { msgId } = req.params;
 
             let result = await messageService.deleteMessage({ id, msgId });
 

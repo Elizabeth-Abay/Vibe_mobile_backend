@@ -48,7 +48,7 @@ class ChatModel {
 
     async getParticipantsId(chatId) {
         try {
-            const result = await ChatModel.findById(chatId)
+            const result = await Chat.findById(chatId)
                 .select('participants')
                 .lean();
 
@@ -110,6 +110,12 @@ class ChatModel {
                 });
             }
 
+            if (!existingChat) return {
+                success: false,
+                reason: "couldn't find chat"
+
+            }
+
 
             // 2. If found, just return the existing chat's ID
             return (existingChat.length !== 0)
@@ -125,6 +131,7 @@ class ChatModel {
                     reason: "couldn't find chat"
 
                 }
+
 
 
         } catch (err) {
@@ -149,6 +156,12 @@ class ChatModel {
                     participants: [id],
                     type: 'self'
                 });
+            }
+
+            if (!newChat) return {
+                success: false,
+                reason: "couldn't find chat"
+
             }
 
 
