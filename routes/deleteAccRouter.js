@@ -4,6 +4,6 @@ const DeleteAccController = require('../controller/DeleteController');
 
 const deleteRouter = express.Router();
 
-deleteRouter.post('/delete-acc', TokenDecoder.refreshDecoder, DeleteAccController.deleteAcc);
+deleteRouter.post('/delete-acc',TokenDecoder.accessDecode , TokenDecoder.refreshDecoder, DeleteAccController.deleteAcc);
 
 module.exports = deleteRouter;

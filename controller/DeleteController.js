@@ -3,9 +3,11 @@ const DeleteAccService = require('../service/deleteAccService');
 class DeleteAccController {
     static async deleteAcc(req, res, next) {
         try {
+            let { id } = req.decodedAccess;
+
             let { randomString } = req.decodedRefresh;
 
-            let result = await DeleteAccService.deleteAcc(randomString);
+            let result = await DeleteAccService.deleteAcc({ id, randomString });
 
             return (result.success) ?
                 res.status(200).json(result)

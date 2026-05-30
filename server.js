@@ -44,7 +44,7 @@ server.use('/token', tokenRouter); // -- worked
 server.use('/message', messageRouter); // -- worked
 server.use('/chat', chatRouter); // -- worked
 server.use('/delete', deleteAccRouter);
-server.use('/block', blockRouter);
+server.use('/block', blockRouter); // -- worked
 
 
 

@@ -6,24 +6,19 @@ const refToken = new RefreshToken();
 
 
 class DeleteAccService {
-    static async deleteAcc(randomString) {
+    static async deleteAcc({ id, randomString }) {
         try {
             // get the info from randomString
             let hashedRandom = shaHasher(randomString);
 
-            let result = await refToken.getTokenInfo(hashedRandom);
-
-            if (!result.success) return result;
-
-            let { user_id } = result.data;
 
             // invalidate all refresh tokend
-            let invalidateAllRef = await refToken.invalidateAllRefresh(user_id);
+            let invalidateAllRef = await refToken.invalidateAllRefresh(id);
 
             if (!invalidateAllRef) return invalidateAllRef;
 
             // delete the user
-            let deleteUserResult = await DeleteAcc.deleteUser(user_id);
+            let deleteUserResult = await DeleteAcc.deleteUser(id);
 
             return deleteUserResult;
 

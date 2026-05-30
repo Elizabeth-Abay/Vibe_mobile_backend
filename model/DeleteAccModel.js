@@ -9,6 +9,8 @@ class DeleteUser {
                 RETURNING id;
             `;
 
+            // u cant delete ur self from the mongoose and graph db
+
             let values = [id];
 
             let result = await pool.query(query, values);
