@@ -44,15 +44,6 @@ class AuthService {
 
             let { id } = userInPg.data;
 
-            let userInGraph = await authModelGraph.createGraphNode(id);
-
-            if (!userInGraph.success) return userInGraph;
-
-
-            let userInMong = await authModelMong.createUser(id);
-
-            if (!userInMong) return userInMong;
-
 
             return {
                 success: true,
@@ -103,6 +94,17 @@ class AuthService {
                     reason: "Couldnt update user status"
                 }
             }
+
+            // create graph and mongodb instances once verified
+            let userInGraph = await authModelGraph.createGraphNode(id);
+
+            if (!userInGraph.success) return userInGraph;
+
+
+            let userInMong = await authModelMong.createUser(id);
+
+            if (!userInMong) return userInMong;
+
 
             // else create tokens
 
@@ -156,7 +158,7 @@ class AuthService {
             let otpHashed = shaHasher(OTP);
 
             // updating the OTP in the table
-            let updatingOtp = await authModelPg.resendOtp({email , otpHashed});
+            let updatingOtp = await authModelPg.resendOtp({ email, otpHashed });
 
             if (!updatingOtp.success) return updatingOtp;
 

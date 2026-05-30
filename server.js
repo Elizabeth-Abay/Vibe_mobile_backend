@@ -39,7 +39,7 @@ server.use('/post', postRouter); // -- worked
 server.use('/profile', profileRouter); // -- worked
 server.use('/request', requestRouter); // -- worked
 server.use('/connection', connectionRouter); // -- worked
-server.use('/notification', notificationRouter);
+server.use('/notification', notificationRouter); // -- worked
 server.use('/token', tokenRouter);
 server.use('/message', messageRouter);
 server.use('/chat', chatRouter);
