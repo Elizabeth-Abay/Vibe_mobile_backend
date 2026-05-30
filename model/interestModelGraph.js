@@ -36,7 +36,7 @@ class InterestModelG {
 
             )
 
-            console.log("Result from connecting interest and user " , result.records);
+            console.log("Result from connecting interest and user ", result.records);
 
 
             return (result.records[0]?.length === 0) ? { success: false } : { success: true }
@@ -117,9 +117,8 @@ class InterestModelG {
         try {
             // we want to get all names of nodes which are linked by interested_in
             let query = `
-            MATCH (u:Person) WHERE u.id = $id
-            MATCH (u)-[r:INTERESTED_IN]->(i)
-            RETURN collect(i.name) , collect(r.rated_as)
+                    MATCH (u:Person {id: $id})-[r:INTERESTED_IN]->(i)
+                    RETURN collect(distinct {interest: i.name, rating: r.rated_as}) AS interests
             `
 
             let res = await sessionToRead.executeRead(

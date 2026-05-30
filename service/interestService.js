@@ -100,29 +100,29 @@ class InterestService {
 
             // if successful this retuns 2 arrays
             if (!result.success) return result;
-            
-            console.log("Resukt " , result)
 
-            const names = result.data[0];
-            const values = result.data[1];
+            console.log("Resukt ", result)
+
+            const interestAndVals = result.data[0];
 
 
-            const formattedInterests = names.map((name, index) => {
-                // Lowercase and trim the interest name to match slug requirements
-                const key = name.toLowerCase().trim();
 
-                // Grab the corresponding score using the current loop index
-                const val = values[index];
+            const formattedInterests = interestAndVals.map((item) => {
+                // Lowercase and trim the interest name (e.g., "Football" -> "football")
+                const key = item.interest.toLowerCase().trim();
+                const val = item.rating;
 
                 return { [key]: val };
             });
+
+
 
             return { success: true, data: formattedInterests }
 
         } catch (err) {
             // the lower layers will throw error and the upper layer will be the one to catch that
             if (typeof err === 'object' && !err.from) {
-                err.from = 'InterestService.linkingInterest';
+                err.from = 'InterestService.getUserInterest';
             }
             throw err;
         }
