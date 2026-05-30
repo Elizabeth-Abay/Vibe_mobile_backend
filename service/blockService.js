@@ -83,3 +83,6 @@ class BlockService {
         }
     }
 }
+
+
+module.exports = BlockService;

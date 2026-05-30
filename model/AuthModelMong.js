@@ -1,4 +1,5 @@
 const User = require('./schemas/UserModel');
+const mongoose = require('mongoose');
 
 
 class AuthModelMong {

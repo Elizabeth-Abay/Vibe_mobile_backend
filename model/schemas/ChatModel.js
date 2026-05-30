@@ -4,7 +4,7 @@ const ChatSchema = new mongoose.Schema({
     // id will be assigned automatically
     participants: [
         {
-            type: mongoose.Schema.Types.ObjectId, // <-- MongoDB ObjectId
+            type: String, // <-- MongoDB ObjectId
             ref: 'User',
             required: true
         }

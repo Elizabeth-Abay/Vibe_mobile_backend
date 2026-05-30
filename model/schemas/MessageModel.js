@@ -8,7 +8,7 @@ const MessageSchema = new mongoose.Schema({
         required : [true , 'A message must belong to a chat']
     },
     sender_id : {
-        type : mongoose.Schema.Types.ObjectId,
+        type : String,
         ref : 'User',
         required : [true , 'A sender needs to be there on the message']
     },

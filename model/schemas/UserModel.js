@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
     id: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: [true, 'id is required to create a profile']
     },
     created_at: {
@@ -26,7 +26,7 @@ UserSchema.methods.canReceiveMessageFrom = function (senderId) {
     // bool - if inc - true = cant send the message
 
     // 2. If blocked, return false. Otherwise, return true.
-    return (isBlocked) ? { success : false , reason : "Blocked"} : { success : true}; 
+    return (isBlocked) ? { success: false, reason: "Blocked" } : { success: true };
 };
 
 // the model is where u attach the methods

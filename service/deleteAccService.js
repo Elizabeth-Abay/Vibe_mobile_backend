@@ -23,9 +23,9 @@ class DeleteAccService {
             if (!invalidateAllRef) return invalidateAllRef;
 
             // delete the user
-            let result = await DeleteAcc.deleteUser(user_id);
+            let deleteUserResult = await DeleteAcc.deleteUser(user_id);
 
-            return result;
+            return deleteUserResult;
 
         } catch (err) {
             if (typeof err === 'object' && !err.from) {

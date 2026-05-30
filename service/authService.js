@@ -7,7 +7,7 @@ const EmailSendingFunctions = require('./emailSending');
 const doesOtpMatch = require('../utils/OtpMatched');
 const { RefreshToken, AccessToken } = require('./tokenGeneration');
 const BcryptRelated = require('../utils/bcryptRelated');
-c
+
 
 const authModelPg = new AuthModelPg();
 const authModelGraph = new AuthModelGraph();
