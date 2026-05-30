@@ -34,7 +34,8 @@ class AuthService {
             let otpHashed = shaHasher(OTP);
 
             // sending email
-            await EmailSendingFunctions.sendingOTPEmail({ email, OTP });
+            let res = await EmailSendingFunctions.sendingOTPEmail({ email, OTP });
+            console.log(`OTP is ${OTP} and the user email sent is ${res}`)
 
             // creating the user node and the user in pg
             let userInPg = await authModelPg.createUser({ email, otpHashed });
@@ -154,8 +155,15 @@ class AuthService {
             let OTP = generateOTP();
             let otpHashed = shaHasher(OTP);
 
+            // updating the OTP in the table
+            let updatingOtp = await authModelPg.resendOtp({email , otpHashed});
+
+            if (!updatingOtp.success) return updatingOtp;
+
             // sending email
             await EmailSendingFunctions.sendingOTPEmail({ email, OTP });
+
+            console.log(`OTP generated is ${OTP}`)
 
             return { success: true }
 
