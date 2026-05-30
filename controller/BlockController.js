@@ -53,9 +53,9 @@ class BlockController {
         try {
             let { id } = req.decodedAccess;
 
-            let { unblockUser } = req.body;
+            let { unblockedUser } = req.body;
 
-            let result = await blockService.unblockUser({ id, unblockUser });
+            let result = await blockService.unblockUser({ id, unblockedUser });
 
             return (result.success)
                 ?

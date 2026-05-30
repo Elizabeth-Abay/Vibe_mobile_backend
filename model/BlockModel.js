@@ -30,7 +30,7 @@ class BlockModel {
 
     async getAllBlocked(id) {
         try {
-            let blockedUsers = await UserModel.findById(id)
+            let blockedUsers = await UserModel.findOne({ id: id })
                 .select('blocked_users')
                 .lean();
             // Only pull the blocked_users field from the DB
@@ -52,8 +52,8 @@ class BlockModel {
 
     async blockUser({ id, blockedUser }) {
         try {
-            let result = await UserModel.findByIdAndUpdate(
-                id,
+            let result = await UserModel.findOneAndUpdate(
+                { id: id },
                 {
                     // $addToSet ensures the ID is only added ONCE
                     $addToSet: { blocked_users: blockedUser }
@@ -85,8 +85,10 @@ class BlockModel {
 
     async unblockUser({ id, unblockedUser }) {
         try {
-            let result = await UserModel.findByIdAndUpdate(
-                id,
+            console.log("{id, unblockedUser } respectively");
+            console.log({ id, unblockedUser })
+            let result = await UserModel.findOneAndUpdate(
+                { id: id },
                 {
                     // $pull removes the matching ID from the blocked_users array
                     $pull: { blocked_users: unblockedUser }
